@@ -1,3 +1,7 @@
+# TODO
+# -  Add subnet restriction.
+#    Example: Only setup the select subnet's route table to route traffic to peered vpc
+#    If no subnets are given then setup all subnet route tables
 terraform {
   required_providers {
     aws = {
@@ -29,7 +33,7 @@ data "aws_region" "dst" {
 #   provider = aws.src
 #   vpc_id        = data.aws_vpc.src.id
 #   peer_vpc_id   = data.aws_vpc.dst.id
-#   peer_region   = data.aws_region.dst.name  
+#   peer_region   = data.aws_region.dst.name
 # }
 # resource "aws_vpc_peering_connection_accepter" "dst-src" {
 #   provider                  = aws.dst
