@@ -1,0 +1,6 @@
+*.tfvars
+*.tfstate
+*.tfstate.bak
+.terraform/
+*.tfplan
+*.tfstate.lock.info
