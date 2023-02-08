@@ -4,3 +4,4 @@
 .terraform/
 *.tfplan
 *.tfstate.lock.info
+private/
