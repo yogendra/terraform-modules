@@ -1,6 +1,5 @@
 *.tfvars
-*.tfstate
-*.tfstate.bak
+*.tfstate*
 .terraform/
 *.tfplan
 *.tfstate.lock.info
