@@ -73,6 +73,8 @@ module "yba"{
   yba-license-file = "./private/yugaware.rli"
   region = "ap-southeast-1"
   az-list = ["ap-southeast-1a","ap-southeast-1b", "ap-southeast-1c"]
+  external_domain_hosted_zone =  "Z04311021JK3VSZKS3Q9R"
+  external_domain = "apj.yugabyte.com"
 
   yba-iam-instance-profile = "YugabyteSSMEC2InstanceProfileRole"
 
