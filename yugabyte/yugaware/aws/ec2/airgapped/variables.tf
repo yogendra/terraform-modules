@@ -62,7 +62,7 @@ variable "external_domain" {
   type        = string
   description = "External domain for app,portal, etc."
 }
-variable "exteral_domain_hosted_zone" {
+variable "external_domain_hosted_zone" {
   type        = string
   description = "Route53 hosted zone ID for external domain"
 }
