@@ -107,6 +107,13 @@ resource "aws_security_group" "yb-db-nodes" {
     cidr_blocks      = local.project_cidrs
   }
   ingress {
+    description      = "Allow Node Metric"
+    from_port        = 9300
+    to_port          = 9300
+    protocol         = "tcp"
+    cidr_blocks      = local.project_cidrs
+  }
+  ingress {
     description      = "Allow Yedis Metric"
     from_port        = 11000
     to_port          = 11000
@@ -124,6 +131,13 @@ resource "aws_security_group" "yb-db-nodes" {
     description      = "Allow YSQL Metric"
     from_port        = 13000
     to_port          = 13000
+    protocol         = "tcp"
+    cidr_blocks      = local.project_cidrs
+  }
+  ingress {
+    description      = "Allow YBC"
+    from_port        = 18018
+    to_port          = 18018
     protocol         = "tcp"
     cidr_blocks      = local.project_cidrs
   }
