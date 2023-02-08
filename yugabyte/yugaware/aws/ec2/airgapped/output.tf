@@ -1,37 +1,37 @@
 
-output "yba-instance-01" {
-  value = module.yba-portal-01.ec2_ids[0]
+output "yba" {
+  value = aws_instance.yba.id
 }
 
 output "yba-info" {
   value = <<-INFO
 ## YBA Manual AWS Config Settings
 
-  * Hosted Zone ID       : ${module.internal-db-zone.zone_id}
-  * VPC ID               : ${var.management_vpc_id}
+  * Hosted Zone ID       : ${aws_route53_zone.internal-db-zone.id}
+  * VPC ID               : ${var.vpc_id}
   * Region               : ${var.region}
-  * DB Security Group ID : ${module.subnets.sg_db}
+  * DB Security Group ID : ${var.db-security-group}
   * DB AMI               : ${var.yba-db-ami}
   * AZ Subnets
-  %{~for i, az in var.az_list}
-  * ${az}    : ${module.subnets.subnet_ids_db[i]}
+  %{~for i, az in var.az-list}
+  * ${az}    : ${var.db-subnets[i]}
   %{~endfor}
 
 ## Package Bucket
 
-ID             : ${module.yba-packages-bucket.s3_bucket_id}
-ARN            : ${module.yba-packages-bucket.s3_bucket_arn}
-Domain Name    : ${module.yba-packages-bucket.s3_bucket_domain_name}
-Hosted Zone ID : ${module.yba-packages-bucket.s3_bucket_hosted_zone_id}
-Region         : ${module.yba-packages-bucket.s3_bucket_region}
+ID             : ${aws_s3_bucket.yba-packages.id}
+ARN            : ${aws_s3_bucket.yba-packages.arn}
+Domain Name    : ${aws_s3_bucket.yba-packages.bucket_domain_name}
+Hosted Zone ID : ${aws_s3_bucket.yba-packages.hosted_zone_id}
+Region         : ${aws_s3_bucket.yba-packages.region}
 
 ## Backup Bucket
 
-ID             : ${module.yba-backup-bucket.s3_bucket_id}
-ARN            : ${module.yba-backup-bucket.s3_bucket_arn}
-Domain Name    : ${module.yba-backup-bucket.s3_bucket_domain_name}
-Hosted Zone ID : ${module.yba-backup-bucket.s3_bucket_hosted_zone_id}
-Region         : ${module.yba-backup-bucket.s3_bucket_region}
+ID             : ${aws_s3_bucket.yba-backup.id}
+ARN            : ${aws_s3_bucket.yba-backup.arn}
+Domain Name    : ${aws_s3_bucket.yba-backup.bucket_domain_name}
+Hosted Zone ID : ${aws_s3_bucket.yba-backup.hosted_zone_id}
+Region         : ${aws_s3_bucket.yba-backup.region}
   INFO
 }
 
@@ -39,7 +39,7 @@ output "debug-tips" {
   value = <<-INFO
 
 ## Connect to YBA Node(s)
-%{for i in module.yba-portal-01.ec2_ids[*]}
+%{for i in [aws_instance.yba.id]}
   SSH
     aws ssm start-session --target ${i}
 
@@ -67,16 +67,16 @@ output "debug-env" {
       User ec2-user
       UserKnownHostsFile /dev/null
       StrictHostKeyChecking no
-      ProxyCommand bash -c \"aws ssm start-session --target ${module.yba-portal-01.ec2_ids[0]} --profile $AWS_PROFILE --region ap-southeast-1 --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" > ~/.ssh/configs/temp-gcc-yba-portal-01
+      ProxyCommand bash -c \"aws ssm start-session --target ${aws_instance.yba.id} --profile $AWS_PROFILE --region ap-southeast-1 --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" > ~/.ssh/configs/temp-gcc-yba-portal-01
 
-    echo aws ssm start-session --target ${module.yba-portal-01.ec2_ids[0]}
+    echo aws ssm start-session --target ${aws_instance.yba.id}
 
     # Replicated Port Forward
-    echo aws ssm start-session --target ${module.yba-portal-01.ec2_ids[0]} --document-name AWS-StartPortForwardingSession \
+    echo aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession \
         --parameters '{"portNumber":["8800"],"localPortNumber":["8800"]}' &
 
     # YugabyteDB anywhere Port Forward
-    echo aws ssm start-session --target ${module.yba-portal-01.ec2_ids[0]} --document-name AWS-StartPortForwardingSession \
+    echo aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession \
         --parameters '{"portNumber":["80"],"localPortNumber":["8080"]}' &
   SSH
 }

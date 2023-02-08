@@ -1,4 +1,4 @@
-varaible "prefix"{
+variable "prefix"{
   type = string
   description = "Resource prefix"
 }
@@ -61,12 +61,10 @@ variable "internal_db_domain" {
 variable "external_domain" {
   type        = string
   description = "External domain for app,portal, etc."
-  default     = "imda-tal.poc.yugabyte.gq"
 }
 variable "exteral_domain_hosted_zone" {
   type        = string
   description = "Route53 hosted zone ID for external domain"
-  default     = "Z01935793DEGQ1VWFXO8O"
 }
 variable "yba-db-ami" {
   type        = string
@@ -99,6 +97,13 @@ variable tags {
   }
 }
 
+variable "region" {
+  type = string
+}
+variable "az-list"{
+  type = list(string)
+}
+
 
 variable "vpc_id"{
   type = string
@@ -110,7 +115,7 @@ variable "yba-subnet" {
 }
 
 variable "db-subnets"{
-  type = string
+  type = list(string)
   description = "DB Node Subnets"
 }
 
@@ -119,7 +124,16 @@ variable "yba-security-group" {
   description = "YBA Security Group ID"
 }
 
+variable "db-security-group" {
+  type = string
+  description = "DB Security Group ID"
+}
+
 variable "yba-iam-instance-profile"{
   type = string
   description = "YBA IAM Instance Profile"
+}
+variable "yba-license-file" {
+  type = string
+  description = "YBA License File"
 }

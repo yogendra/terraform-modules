@@ -2,8 +2,8 @@
 
 locals {
   portal-internal-fqdn = "portal-01.${var.internal_db_domain}"
-  pubKey               = file(format("%[1]s/kp-%[2]s-%[3]s%[4]sna.pub", var.env_name, var.project_code, var.env_name, var.zone_name))
-  yugawareLicense      = filebase64(format("%[1]s/yba-license-%[2]s-%[3]s%[4]s.rli", var.env_name, var.project_code, var.env_name, var.zone_name))
+  pubKey               = var.public_key
+  yugawareLicense      = filebase64(var.yba-license-file)
 
   replicatedConf = templatefile("${path.module}/templates/replicated.conf", {
     password      = var.yba-replicated-password
@@ -28,7 +28,7 @@ locals {
         airGapInstall = true
         code          = "aws"
         config = {
-          HOSTED_ZONE_ID   = module.internal-db-zone.zone_id
+          HOSTED_ZONE_ID   = aws_route53_zone.internal-db-zone.zone_id
           HOSTED_ZONE_NAME = "${var.internal_db_domain}."
         }
         name    = "aws"
@@ -40,15 +40,15 @@ locals {
             name    = var.region
             ybImage = var.yba-db-ami
             zones = [
-              for i, az in var.az_list : {
+              for i, az in var.az-list : {
                 code   = az
                 name   = az
-                subnet = module.subnets.subnet_ids_db[i]
+                subnet = var.db-subnets[i]
               }
             ]
             details = {
               architecture = "x86_64"
-              sg_id        = module.subnets.sg_db
+              sg_id        = var.db-security-group
             }
           }
         ]
@@ -69,7 +69,7 @@ locals {
         configName = "aws-s3"
         name       = "S3"
         data = {
-          BACKUP_LOCATION      = "s3://${module.yba-backup-bucket.s3_bucket_id}"
+          BACKUP_LOCATION      = "s3://${aws_s3_bucket.yba-backup.id}"
           IAM_INSTANCE_PROFILE = "true"
         }
       }
@@ -86,7 +86,7 @@ locals {
     serverKey       = tls_private_key.portal.private_key_pem
     serverCert      = tls_self_signed_cert.portal-01.cert_pem
     cloudConfigJson = jsonencode(local.ybCloudConfig)
-    stagingBucket   = "s3://${module.yba-packages-bucket.s3_bucket_id}"
+    stagingBucket   = "s3://${aws_s3_bucket.yba-packages.id}"
   })
 }
 

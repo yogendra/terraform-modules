@@ -1,7 +1,7 @@
 
-resource "aws_security_group" "app" {
+# resource "aws_security_group" "app" {
 
-}
+# }
 
 resource "aws_security_group" "yba-node" {
   name        = "yba-nodes"

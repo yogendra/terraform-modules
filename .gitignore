@@ -5,3 +5,8 @@
 *.tfplan
 *.tfstate.lock.info
 private/
+*.tar.gz
+*.tgz
+*.log
+*.zip
+*.airgap
