@@ -16,14 +16,11 @@ resource "aws_instance" "yba" {
   ]
   user_data_base64 = data.cloudinit_config.yba.rendered
 
-  # tags =merge(
-  #   var.tags,
-  #   {
-  #     Name = "${prefix}-YBA"
-  #   }
-  # )
-  root_block_device {
-    volume_size = 200
-    volume_type = "gp3"
+  # root_block_device {
+  #   volume_size = 200
+  #   volume_type = "gp3"
+  # }
+  tags = {
+    Name = "${var.prefix}-yba"
   }
 }
