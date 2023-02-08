@@ -2,6 +2,10 @@ varaible "prefix"{
   type = string
   description = "Resource prefix"
 }
+variable "public_key"{
+  type = string
+  description = "Public key to add to the account for yugaware"
+}
 variable "yba-db-password" {
   type        = string
   description = "YBA DB Password"
@@ -39,7 +43,7 @@ variable "yba-replicated-password" {
   description = "YBA Replicated Password"
   default     = "Password#123"
 }
-variable "yba-instancetype" {
+variable "yba-instance-type" {
   type        = string
   description = "YBA Machine Size"
   default     = "t3.xlarge"
@@ -110,3 +114,12 @@ variable "db-subnets"{
   description = "DB Node Subnets"
 }
 
+variable "yba-security-group" {
+  type = string
+  description = "YBA Security Group ID"
+}
+
+variable "yba-iam-instance-profile"{
+  type = string
+  description = "YBA IAM Instance Profile"
+}

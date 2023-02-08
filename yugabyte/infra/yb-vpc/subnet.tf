@@ -1,17 +1,4 @@
 
-locals {
-  subnets = flatten([
-    for zidx, zone in var.config.zones : [
-      for sn, cidr in zone.subnets : {
-        name   = sn,
-        cidr   = cidr,
-        az     = zone.name
-        public = "ingress" == sn
-      }
-    ]
-  ])
-}
-
 
 resource "aws_subnet" "subnet" {
 

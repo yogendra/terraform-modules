@@ -1,13 +1,4 @@
-locals{
-  db_cidrs = [for s in local.subnets:  s.cidr if s.name == "db"]
-  mgmt_cidrs = [for s in local.subnets:  s.cidr if s.name == "mgmt"]
-  ingress_cidrs = [for s in local.subnets:  s.cidr if s.name == "ingress"]
-  app_cidrs = [for s in local.subnets:  s.cidr if s.name == "app"]
-  devops_cidrs = [for s in local.subnets:  s.cidr if s.name == "ingress"]
-  egress_cidrs = [for s in local.subnets:  s.cidr if s.name == "ingress"]
-  vpc_cidrs = var.config.cidrs
-  project_cidrs = [var.project_cidr]
-}
+
 resource "aws_security_group" "app" {
 
 }
