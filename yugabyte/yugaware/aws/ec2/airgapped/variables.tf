@@ -69,13 +69,13 @@ variable "external_domain_hosted_zone" {
 variable "yba-db-ami" {
   type        = string
   description = "YB DB VM Image (Needs python3)"
-  default     = "ami-099ac8005266baac3"
+  default     = "ami-08569b978cc4dfa10"
 }
 
 variable "yba-portal-ami" {
   type        = string
   description = "YBA Portal AMI ID (needs to have docker and python)"
-  default     = "ami-0907da66c7ee6466e"
+  default     = "ami-08569b978cc4dfa10"
 
 }
 
