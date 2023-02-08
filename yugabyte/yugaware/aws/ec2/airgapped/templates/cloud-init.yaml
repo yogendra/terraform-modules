@@ -1,0 +1,58 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups: users
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  local_passwd: true
+  ssh_authorized_keys:
+  - "${pubKey}"
+
+groups:
+  - docker
+
+system_info:
+  default_user:
+    groups: [docker]
+
+write_files:
+- path: /etc/replicated.conf
+  permissions: "0644"
+  content: |+
+    ${indent(4,replicatedConf)}
+- path: /etc/yugaware.conf
+  permissions: "0644"
+  content: |+
+    ${indent(4,yugawareConf)}
+- path: /etc/yugaware.rli
+  permissions: "0644"
+  content: !!binary |
+    ${indent(4,yugawareLicense)}
+- path: /usr/local/bin/install-yugaware.sh
+  permissions: "0755"
+  content: |+
+    ${indent(4, installYugaware)}
+- path: /usr/local/bin/setup-yugaware.py
+  permissions: "0755"
+  content: |+
+    ${indent(4, setupYugaware)}
+- path: /etc/server.cer
+  permission: "0655"
+  content: |+
+    ${indent(4, serverCert)}
+- path: /etc/server.key
+  permission: "0655"
+  content: |+
+    ${indent(4, serverKey)}
+
+runcmd:
+- if [[ -d /usr/share/pki/ca-trust-source/anchors/ ]]; then  cp /etc/server.cer /usr/share/pki/ca-trust-source/anchors/ ;  update-ca-trust ; fi
+- if [[ -d /usr/local/share/ca-certificates/ ]]; then cp /etc/server.cer /usr/local/share/ca-certificates/server.cer; update-ca-certificates ; fi
+- export CLOUD_CONFIG_JSON='${cloudConfigJson}'
+- export STAGING_BUCKET='${stagingBucket}'
+- /usr/local/bin/install-yugaware.sh
+- /usr/local/bin/setup-yugaware.py
