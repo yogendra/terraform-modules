@@ -137,3 +137,8 @@ variable "yba-license-file" {
   type = string
   description = "YBA License File"
 }
+variable "yba-online-install" {
+  type = bool
+  default = true
+  description = "YBA Online Installation"
+}
