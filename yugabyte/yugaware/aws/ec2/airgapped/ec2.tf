@@ -11,7 +11,7 @@ resource "aws_instance" "yba" {
   iam_instance_profile = var.yba-iam-instance-profile
   monitoring = true
   subnet_id = var.yba-subnet
-  security_groups = [
+  vpc_security_group_ids = [
     var.yba-security-group
   ]
   user_data_base64 = data.cloudinit_config.yba.rendered
