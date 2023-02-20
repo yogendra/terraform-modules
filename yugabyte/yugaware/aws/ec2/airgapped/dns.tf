@@ -1,6 +1,9 @@
 
 resource "aws_route53_zone" "internal-db-zone" {
   name = var.internal_db_domain
+  vpc {
+    vpc_id  = var.vpc_id
+  }
 }
 
 resource "aws_route53_record" "internal-portal-01" {
