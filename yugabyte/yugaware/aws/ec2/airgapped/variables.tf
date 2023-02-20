@@ -75,7 +75,10 @@ variable "yba-db-ami" {
 variable "yba-portal-ami" {
   type        = string
   description = "YBA Portal AMI ID (needs to have docker and python)"
-  default     = "ami-08569b978cc4dfa10"
+  // Build images/yba.pkr.hcl
+  # default     = "ami-0218d5f1dc6254559" // Offline
+  // Build images/ybdb.pkr.hcl
+  default     = "ami-0e593c8db6f574215" // Online
 
 }
 
