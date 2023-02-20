@@ -27,7 +27,7 @@ provider "aws" {{
   alias = "{provider_alias}"
   region = "{region}"
   default_tags {{
-    tags = {_as_tf_obj(tags, indent=4)}
+    tags = {_as_tf_obj(tags, indent=3)}
   }}
 }}
     """
@@ -59,7 +59,7 @@ def generate_vpc_config(az_list, project_cidr:str):
 
   return f"""
 locals {{
-  vpc_config = {_as_tf_obj(vpc, indent=4)}
+  vpc_config = {_as_tf_obj(vpc, indent=2)}
 }}
   """
 
@@ -115,9 +115,9 @@ module "peer-{src}-{dest}" {{
   return peer_modules
 
 
-def _as_tf_obj(o, size=4, indent=0):
+def _as_tf_obj(o, size=2, indent=0):
   spc = " " * indent * size
-  val_spc = " " * (indent + size)
+  val_spc = spc + (" " * size)
   if o == None:
     return "null"
 
@@ -133,7 +133,7 @@ def _as_tf_obj(o, size=4, indent=0):
       entries = o.items()
       last_index = len(entries)-1
       for i, (k,v) in enumerate(entries):
-        output +=val_spc + k + " = " + _as_tf_obj(v,indent=indent+1)
+        output += val_spc + k + " = " + _as_tf_obj(v,indent=indent+1)
         if i != last_index:
             output += ","
 
