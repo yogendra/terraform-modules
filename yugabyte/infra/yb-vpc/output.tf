@@ -3,7 +3,7 @@ output "vpc_id"{
   value = aws_vpc.vpc.id
 }
 
-output "yba-iam-role" {
+output "yba-instance-profile" {
   value = aws_iam_instance_profile.yba.name
 }
 
