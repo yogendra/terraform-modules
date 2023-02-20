@@ -7,9 +7,10 @@ locals {
 
   replicatedConf = templatefile("${path.module}/templates/replicated.conf", {
     password      = var.yba-replicated-password
-    airgapPackage = "/opt/yugabyte/packages/yugabyte/yugaware-${var.yb-release}-linux-x86_64.airgap"
+    airgapPackage = var.yba-online-install ? "" : "/opt/yugabyte/packages/yugabyte/yugaware-${var.yb-release}-linux-x86_64.airgap"
     hostname      = local.portal-internal-fqdn
   })
+
   yugawareConf = templatefile("${path.module}/templates/yugaware.conf", {
     dbPassword = var.yba-db-password
   })
@@ -25,7 +26,7 @@ locals {
     portal = "https://${local.portal-internal-fqdn}"
     providers = [
       {
-        airGapInstall = true
+        airGapInstall = !var.yba-online-install
         code          = "aws"
         config = {
           HOSTED_ZONE_ID   = aws_route53_zone.internal-db-zone.zone_id
@@ -59,7 +60,7 @@ locals {
         type = "AWS",
         config = {
           name       = "aws-kms",
-          AWS_REGION = "ap-southeast-1"
+          AWS_REGION = var.region
         }
       }
     ],
@@ -87,6 +88,7 @@ locals {
     serverCert      = tls_self_signed_cert.portal-01.cert_pem
     cloudConfigJson = jsonencode(local.ybCloudConfig)
     stagingBucket   = "s3://${aws_s3_bucket.yba-packages.id}"
+    onlineInstall   = var.yba-online-install ? "1"  : "0"
   })
 }
 
