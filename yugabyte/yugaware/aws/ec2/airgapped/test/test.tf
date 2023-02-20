@@ -75,7 +75,29 @@ module "yba"{
   az-list = ["ap-southeast-1a","ap-southeast-1b", "ap-southeast-1c"]
   external_domain_hosted_zone =  "Z04311021JK3VSZKS3Q9R"
   external_domain = "apj.yugabyte.com"
-
-  yba-iam-instance-profile = "YugabyteSSMEC2InstanceProfileRole"
+  yba-iam-instance-profile = module.yb-singapore-vpc.yba-instance-profile
+  yba-online-install = true
 
 }
+
+
+
+output "yba" {
+  value = module.yba.yba
+}
+
+
+output "yba-info" {
+  value = module.yba.yba-info
+}
+
+
+output "debug-env" {
+  value = module.yba.debug-env
+}
+
+
+output "debug-tips" {
+  value = module.yba.debug-tips
+}
+
