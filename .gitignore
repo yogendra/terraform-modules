@@ -9,3 +9,4 @@ private/
 *.log
 *.zip
 *.airgap
+.direnv/
