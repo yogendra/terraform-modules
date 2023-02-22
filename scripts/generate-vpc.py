@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import sys
+assert sys.version_info >= (3, 10)
 
 def main():
   arg =_process_args()
@@ -121,7 +123,7 @@ def _as_tf_obj(o, size=2, indent=0):
   if o == None:
     return "null"
 
-  match(o):
+  match o:
     case str():
       return f'"{o}"'
     case bool():
