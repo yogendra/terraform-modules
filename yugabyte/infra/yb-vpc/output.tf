@@ -3,10 +3,6 @@ output "vpc_id"{
   value = aws_vpc.vpc.id
 }
 
-output "yba-instance-profile" {
-  value = aws_iam_instance_profile.yba.name
-}
-
 output "sg-yba" {
   value = aws_security_group.yba-node.id
 }
@@ -16,10 +12,6 @@ output "sg-yb-se-access"{
 
 output "sg-yb-db-nodes"{
   value = aws_security_group.yb-db-nodes.id
-}
-
-output "yba-instane-profile" {
-  value = aws_iam_instance_profile.yba.name
 }
 
 output "ingress-subnets" {
