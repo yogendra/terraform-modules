@@ -1,4 +1,5 @@
 resource "aws_key_pair" "keypair" {
-  key_name   = "${var.prefix}-key"
-  public_key = file(var.ssh_public_key)
+  count = length(var.ssh_public_key)
+  prefkey_name_prefix = "${var.prefix}-${count.index}-key"
+  public_key = file(var.ssh_public_key[count.index])
 }
