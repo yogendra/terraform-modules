@@ -1,5 +1,5 @@
 resource "aws_iam_role" "yba" {
-  name = "YBARoleWithSSMAndS3"
+  name = "${var.prefix}-YBARoleWithSSMAndS3"
 
 
   managed_policy_arns = [
@@ -25,12 +25,12 @@ resource "aws_iam_role" "yba" {
 
 
 resource "aws_iam_instance_profile" "yba" {
-  name = "YBAInstanceProfile"
+  name = "${var.prefix}-YBAInstanceProfile"
   role = aws_iam_role.yba.name
 }
 
 resource "aws_iam_policy" "yba" {
-  name        = "YBAPolicy"
+  name        = "${var.prefix}-YBAPolicy"
   description = "YBA Portal - AWS Deployment Policy"
   policy      = jsonencode({
     "Version" : "2012-10-17",

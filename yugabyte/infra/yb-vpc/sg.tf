@@ -1,10 +1,62 @@
 
-# resource "aws_security_group" "app" {
 
-# }
+resource "aws_security_group" "allow-ingress"{
+  name        = "${var.prefix}-allow-ingress"
+  description = "Allow Public Ingress Traffic"
+  vpc_id      = aws_vpc.vpc.id
+  ingress {
+    description      = "Allow HTTP"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "Allow HTTPS"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "Allow Alt HTTP"
+    from_port        = 8080
+    to_port          = 8080
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "Allow Alt HTTPS"
+    from_port        = 8443
+    to_port          = 8443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  ingress {
+    description      = "Allow React HTTP"
+    from_port        = 3000
+    to_port          = 3000
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "allow-all-internal"{
+  name        = "${var.prefix}-allow-all-internal"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = aws_vpc.vpc.id
+  ingress {
+    description      = "Allow all Internal"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = local.project_cidrs
+  }
+
+}
 
 resource "aws_security_group" "yba-node" {
-  name        = "yba-nodes"
+  name        = "${var.prefix}-yba-nodes"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
 
@@ -73,7 +125,7 @@ resource "aws_security_group" "yba-node" {
   }
 }
 resource "aws_security_group" "yb-db-nodes" {
-  name        = "yb-db-nodes"
+  name        = "${var.prefix}-yb-db-nodes"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
 
@@ -192,7 +244,7 @@ resource "aws_security_group" "yb-db-nodes" {
 }
 
 resource "aws_security_group" "yb-se-access" {
-  name        = "yb-se-access"
+  name        = "${var.prefix}-yb-se-access"
   description = "YB SE Access"
   vpc_id      = aws_vpc.vpc.id
 
@@ -219,7 +271,7 @@ resource "aws_security_group" "yb-se-access" {
 
 
 resource "aws_ec2_managed_prefix_list" "yb-se" {
-  name           = "All SE IPs"
+  name           = "${var.prefix}-All SE IPs"
   address_family = "IPv4"
   max_entries    = 20
 }
