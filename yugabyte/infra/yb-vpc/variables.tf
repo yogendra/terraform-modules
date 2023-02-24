@@ -34,6 +34,6 @@ variable "airgapped" {
   default = false
   type = bool
 }
-variable "ssh_public_key" {
-  type = string
+variable "ssh_public_keys" {
+  type = list(string)
 }
