@@ -3,6 +3,12 @@ output "vpc_id"{
   value = aws_vpc.vpc.id
 }
 
+output "sg-ingress" {
+  value = aws_security_group.allow-ingress.id
+}
+output "sg-allow-internal" {
+  value = aws_security_group.allow-all-internal.id
+}
 output "sg-yba" {
   value = aws_security_group.yba-node.id
 }
@@ -38,3 +44,6 @@ output "devops-subnets" {
   value = aws_subnet.devops-subnet[*].id
 }
 
+output "se-prefix-list-id"{
+  value = aws_ec2_managed_prefix_list.yb-se.id
+}
