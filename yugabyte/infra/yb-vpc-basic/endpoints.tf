@@ -18,7 +18,7 @@ resource "aws_vpc_endpoint" "ssm" {
   service_name        = "com.amazonaws.${local.region}.ssm"
   vpc_endpoint_type   = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
     Name = "${local.prefix}-ssm"
@@ -31,7 +31,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
   service_name        = "com.amazonaws.${local.region}.ec2messages"
   vpc_endpoint_type   = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
 
@@ -44,7 +44,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
   service_name        = "com.amazonaws.${local.region}.ssmmessages"
   vpc_endpoint_type   = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
     Name = "${local.prefix}-ssmmessages"
@@ -58,7 +58,7 @@ resource "aws_vpc_endpoint" "ec2" {
   service_name      = "com.amazonaws.${local.region}.ec2"
   vpc_endpoint_type = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
     Name = "${local.prefix}-ec2"
@@ -72,7 +72,7 @@ resource "aws_vpc_endpoint" "kms" {
   service_name      = "com.amazonaws.${local.region}.kms"
   vpc_endpoint_type = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
     Name = "${local.prefix}-kms"
@@ -86,7 +86,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   service_name      = "com.amazonaws.${local.region}.logs"
   vpc_endpoint_type = "Interface"
   security_group_ids  = [aws_security_group.allow-internal.id]
-  subnet_ids          = aws_subnet.private[*].id
+  subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
     Name = "${local.prefix}-cloudwatch"
