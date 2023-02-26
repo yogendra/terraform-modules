@@ -3,7 +3,7 @@ provider "aws" {
   region = "us-east-1"
 }
 module "test-account" {
-  source = "../../../yb-account"
+  source = "../../../account"
   prefix = local.project_config["prefix"]
 }
 module "test-vpc" {
