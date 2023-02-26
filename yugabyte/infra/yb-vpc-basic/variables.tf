@@ -7,10 +7,7 @@ variable "config" {
     zones = list(object({
       name = string,
       cidr = string,
-      subnets = object({
-        public = string,
-        private = string
-      })
+      subnets = map(string)
     }))
 
   })
