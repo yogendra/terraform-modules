@@ -116,7 +116,7 @@ module "{module_name}" {{
     aws = aws.{provider_alias}
   }}
   project_config = local.project_config
-  config = local.vpc_config["{region}"]
+  config = local.vpc_config.{region}
 
 }}
     """
@@ -140,7 +140,7 @@ module "peer-{src}-{dest}" {{
   source = "{module_source}"
   src_vpc_id =  module.{src_module}.vpc_id
   dest_vpc_id = module.{dest_module}.vpc_id
-  prefix = local.project_config["prefix"]
+  prefix = local.project_config.prefix
   providers = {{
     aws.src = aws.{src_provider}
     aws.dest = aws.{dest_provider}
