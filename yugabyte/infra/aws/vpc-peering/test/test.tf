@@ -1,5 +1,5 @@
 module "test-account" {
-  source = "../../yb-account"
+  source = "../../account"
   prefix = local.project_config["prefix"]
 }
 

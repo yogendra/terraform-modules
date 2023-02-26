@@ -1,6 +1,6 @@
 
 module "vpc-ap-southeast-1" {
-  source = "../../yb-vpc-basic"
+  source = "../../vpc"
   providers = {
     aws = aws.ap_southeast_1
   }
@@ -10,7 +10,7 @@ module "vpc-ap-southeast-1" {
 }
 
 module "vpc-ap-southeast-2" {
-  source = "../../yb-vpc-basic"
+  source = "../../vpc"
   providers = {
     aws = aws.ap_southeast_2
   }
