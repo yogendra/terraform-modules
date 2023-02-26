@@ -164,7 +164,6 @@ def _as_tf_obj(o, size=2, indent=0):
     case str():
       return f'"{o}"'
     case bool():
-      print ("-------------------------" + str(o))
       return 'true' if o == True else 'false'
     case int():
       return o
