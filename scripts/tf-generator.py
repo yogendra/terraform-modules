@@ -104,7 +104,6 @@ module "{module_name}" {{
     aws = aws.{provider_alias}
   }}
   project_config = local.project_config
-  region = "{region}"
   config = local.vpc_config["{region}"]
 
 }}
