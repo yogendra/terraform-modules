@@ -12,7 +12,7 @@ def main():
   if generate == 'all' or generate == 'providers':
       print(generate_provider(az_list, arg.tags))
   if generate == 'all' or generate == 'vpc-config':
-      print(generate_vpc_config(az_list, project_cidr=arg.project_cidr))
+      print(generate_vpc_config(az_list, project_cidr=arg.project_cidr, style=arg.subnet_style, subnets=arg.subnet, subnet_suffix=arg.subnet_suffix, prefix=arg.prefix, use_nat=arg.use_nat, air_gapped=arg.air_gapped))
   if generate == 'all' or generate == 'vpc' :
       print(generate_vpc(az_list, prefix=arg.prefix, project_cidr=arg.project_cidr, module_source=arg.vpc_module_source))
   if generate == 'all' or generate == 'vpc-peering':
@@ -36,31 +36,57 @@ provider "aws" {{
   return providers
 
 
-def generate_vpc_config(az_list, project_cidr:str):
+def generate_vpc_config(az_list, project_cidr:str, style:str, subnets:list, subnet_suffix:int, prefix:str, use_nat:bool, air_gapped:bool):
   vpc_config=""
+  az_subnets = ["public", "private"] if subnets is None else subnets
+  project_suffix = int(project_cidr.split("/")[1])
+  basic = style == "basic"
   from json import dumps
   # create a vpc for each region
   vpc = {}
-  zone_counter=0
+  region_cidr_index=0
+  region_suffix = project_suffix + 5
+
+  zone_cidr_index =0
+  zone_suffix = region_suffix + 2
+  subnet_suffix = zone_suffix + 1 if subnet_suffix is None else subnet_suffix
+
   for region, zones in az_list.items():
+    zone_cidr_index = region_cidr_index * 4
+    vpc[region] = {
+      "air-gapped" : air_gapped,
+      "use-nat"    : use_nat,
+      "region" : region,
+      "cidrs" :  [_sub_cidr(project_cidr, region_suffix, region_cidr_index)],
+      "zones" : [],
+    }
+    region_cidr_index = region_cidr_index + 1
+    if(len(zones) > 4 ):
+      vpc[region]["cidrs"].append(_sub_cidr(project_cidr, region_suffix, region_cidr_index))
+      region_cidr_index = region_cidr_index + 1
+
     for zone in zones:
-      if region not in vpc:
-        vpc[region] = {
-          "cidrs" : [],
-          "zones" : [],
-        }
-      az_cidrs = _az_cidr(zone_counter, project_cidr)
+      az_cidr = _sub_cidr(project_cidr, zone_suffix, zone_cidr_index)
+      az_subnets = _az_subnets_basic(az_cidr,az_subnets, subnet_suffix) if basic else _az_subnets_advance(az_cidr)
+      zone_cidr_index = zone_cidr_index + 1
       zone_config = {
         "name": zone,
-        "cidr" : az_cidrs["az"],
-        "subnets" : az_cidrs["subnets"]
+        "cidr" : az_cidr,
+        "subnets" : az_subnets
       }
       vpc[region]['zones'].append(zone_config)
-      vpc[region]['cidrs'].append( az_cidrs["az"])
-      ++zone_counter
-
   return f"""
 locals {{
+  project_config = {{
+    cidr = "{project_cidr}"
+    prefix = "{prefix}",
+    ssh-public-keys = [
+      // SSH Keys go here (Example: "key1","key2"...)
+    ]
+    remote-ips = {{
+      // Allow IPs go here in the "KEY" = "VALUE" pair (Example: "yogi" = "127.0.0.1")
+    }}
+  }}
   vpc_config = {_as_tf_obj(vpc, indent=2)}
 }}
   """
@@ -77,10 +103,10 @@ module "{module_name}" {{
   providers = {{
     aws = aws.{provider_alias}
   }}
-  prefix = "{prefix}"
+  project_config = local.project_config
   region = "{region}"
-  project_cidr = "{project_cidr}"
   config = local.vpc_config["{region}"]
+
 }}
     """
   return vpcs
@@ -103,7 +129,7 @@ module "peer-{src}-{dest}" {{
   source = "{module_source}"
   src_vpc_id =  module.{src_module}.vpc_id
   dest_vpc_id = module.{dest_module}.vpc_id
-  prefix = "{prefix}-{src}-{dest}"
+  prefix = local.project_config["prefix"]
   providers = {{
     aws.src = aws.{src_provider}
     aws.dest = aws.{dest_provider}
@@ -160,9 +186,8 @@ def _region_list(az_list):
 def _vpc_module_name(region:str, ) -> str:
   return f"vpc-{region}"
 
-def _az_cidr(az_index:int, project_cidr:str):
-  project_suffix = int(project_cidr.split("/")[1])
-  az_suffix = project_suffix + 7
+def _az_subnets_advance(az_cidr:str):
+  az_suffix = int(az_cidr.split("/")[1])
   ingress_suffix = az_suffix + 3
   egress_suffix = az_suffix + 3
   app_suffix = az_suffix + 2
@@ -170,7 +195,6 @@ def _az_cidr(az_index:int, project_cidr:str):
   mgmt_suffix = az_suffix + 3
   devops_suffix = az_suffix + 3
 
-  az_cidr = _sub_cidr(project_cidr, az_suffix, az_index)
   ingress_cidr = _sub_cidr(az_cidr, ingress_suffix, 0)
   egress_cidr = _sub_cidr(az_cidr, egress_suffix, 1)
   app_cidr = _sub_cidr(az_cidr, app_suffix, 1)
@@ -179,23 +203,22 @@ def _az_cidr(az_index:int, project_cidr:str):
   devops_cidr = _sub_cidr(az_cidr, devops_suffix, 7)
 
   return {
-    "az" : az_cidr,
-    "subnets" : {
-      "ingress": ingress_cidr,
-      "egress" : egress_cidr,
-      "app" : app_cidr,
-      "db" : db_cidr,
-      "mgmt" : mgmt_cidr,
-      "devops": devops_cidr
-    }
+    "ingress": ingress_cidr,
+    "egress" : egress_cidr,
+    "app" : app_cidr,
+    "db" : db_cidr,
+    "mgmt" : mgmt_cidr,
+    "devops": devops_cidr
   }
 
+def _az_subnets_basic(az_cidr:str, subnets, subnet_suffix):
+  return { subnet: _sub_cidr(az_cidr, subnet_suffix, i) for i, subnet in enumerate(subnets)}
 
 def _sub_cidr(addr:str, suffix, part):
   from ipaddress import IPv4Network
   net = IPv4Network(addr)
-  subnet=list(net.subnets(new_prefix=suffix))
-  return str(subnet[part])
+  subnets=list(net.subnets(new_prefix=suffix))
+  return str(subnets[part])
 
 
 def _provider_alias(region:str ) -> str:
@@ -257,6 +280,21 @@ def _process_args():
     help="Tags to put on provider (vpc, subnets, etc.)"
   )
   parser.add_argument(
+    "--air-gapped",
+    default=True,
+    type=bool,
+    help="Setup VPC with Airgapped"
+  )
+
+  parser.add_argument(
+    "--use-nat",
+    dest="use_nat",
+    default=False,
+    type=bool,
+    help="Setup VPC with NAT GW"
+  )
+
+  parser.add_argument(
     "-g", "--generate",
     choices=['all','vpc', 'vpc-config', 'providers','vpc-peering'],
     default='all',
@@ -264,27 +302,52 @@ def _process_args():
   )
   parser.add_argument(
     "--vpc-module-source",
-    help="Source location for VPC module",
-    default="../modules/yb-vpc"
+    dest="vpc_module_source",
+    help="Source location for VPC module. Default: git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-basic",
+    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-basic"
   )
   parser.add_argument(
     "--vpc-peering-module-source",
-    help="Source location for VPC module",
-    default="../modules/yb-vpc-peering"
+    dest="vpc_peering_module_source",
+    help="Source location for VPC module. Default: git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-peering",
+    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-peering"
   )
   parser.add_argument(
     "--project-cidr",
     dest="project_cidr",
     help="Project CIDR for this setup",
-    default="10.212.0.0/17"
+    default="10.212.0.0/16"
   )
   parser.add_argument(
-    "-p", "--prefix",
+    "--prefix",
     required=False,
     help="Prefix to put on the resource names. e.g. apj01",
     default="apjpoc01"
   )
+  parser.add_argument(
+    "--subnet-style",
+    dest="subnet_style",
+    choices=["basic", "advance"],
+    default="basic",
+    help="(Optional) Type of subnet type. basic -> private and public. advance -> ingress, egress, app, db, mgmt, devops. You can customize the list with --subnets argument"
+  )
+  parser.add_argument(
+    "--subnet",
+    help="(Optional) Subnet names (multiple). Used only in basic subnet style configuration. Default: public, private",
+    nargs="*",
+    action="extend"
+  )
+  parser.add_argument(
+    "--subnet-suffix",
+    dest="subnet_suffix",
+    required=False,
+    type=int,
+    help="(Optional) Subnet suffix. Used only in basic subnet style configuration."
+  )
+
+
   return parser.parse_args()
+
 
 
 class TagAction(argparse.Action):
