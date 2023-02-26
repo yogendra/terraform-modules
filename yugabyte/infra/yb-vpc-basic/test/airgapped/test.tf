@@ -37,7 +37,7 @@ resource "aws_instance" "test" {
   key_name             = module.test-vpc.ssh-keypairs[0]
 
   tags = {
-    Name = "ag-test-vm"
+    Name = "${local.project_config["prefix"]}-vm"
   }
 }
 
