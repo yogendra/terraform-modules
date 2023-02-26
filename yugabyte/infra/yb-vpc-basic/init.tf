@@ -9,8 +9,11 @@ locals {
 
   public_subnets = [for zone in var.config.zones : { az = zone.name, cidr = zone.subnets.public, public = true, name = "public" }]
 
-  private_subnets    = [for zone in var.config.zones : { az = zone.name, cidr = zone.subnets.private, public = false, name = "private" }]
-
+  private_subnets    = flatten([for zone in var.config.zones :
+    [for subnet, cidr in zone.subnets :
+      { az = zone.name, cidr = cidr, public = false, name = subnet } if subnet != "public"
+    ]
+  ])
   public_cidrs = local.public_subnets.*.cidr
   private_cidrs  = local.private_subnets.*.cidr
   project_cidrs = [var.project_config.cidr]
