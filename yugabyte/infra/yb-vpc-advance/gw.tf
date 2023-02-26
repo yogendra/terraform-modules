@@ -26,42 +26,42 @@ resource "aws_nat_gateway" "nat" {
 
 
 resource "aws_route" "egress-to-igw" {
-  count = var.airgapped ? 0 : length(local.egress_subnets)
-  route_table_id = aws_route_table.egress-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.egress-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_internet_gateway.igw[0].id
 }
 
 resource "aws_route" "ingress-to-nat" {
-  count = var.airgapped ? 0 : length(local.ingress_subnets)
-  route_table_id = aws_route_table.ingress-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.ingress-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.nat[0].id
 }
 
 resource "aws_route" "app-to-nat" {
-  count = var.airgapped ? 0 : length(local.app_subnets)
-  route_table_id = aws_route_table.app-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.app-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.nat[0].id
 }
 
 resource "aws_route" "db-to-nat" {
-  count = var.airgapped ? 0 : length(local.db_subnets)
-  route_table_id = aws_route_table.db-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.db-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.nat[0].id
 }
 resource "aws_route" "mgmt-to-nat" {
-  count = var.airgapped ? 0 : length(local.mgmt_subnets)
-  route_table_id = aws_route_table.mgmt-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.mgmt-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.nat[0].id
 }
 
 resource "aws_route" "devops-to-nat" {
-  count = var.airgapped ? 0 : length(local.devops_subnets)
-  route_table_id = aws_route_table.devops-route-table[count.index].id
+  count = var.airgapped ? 0 : 1
+  route_table_id = aws_route_table.devops-route-table.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.nat[0].id
 }

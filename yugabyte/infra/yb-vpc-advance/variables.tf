@@ -26,7 +26,7 @@ variable "config" {
 }
 
 variable "project_cidr" {
-  default = "10.212.0.0/17"
+  default = "10.212.0.0/16"
   type = string
 }
 
