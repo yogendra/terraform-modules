@@ -1,6 +1,6 @@
 
 resource "aws_vpc_endpoint" "s3" {
-  count             = local.air-gapped ? 1 : 0
+  count             = local.create_endpoints?1:0
   vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${local.region}.s3"
   vpc_endpoint_type = "Gateway"
@@ -13,7 +13,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 
 resource "aws_vpc_endpoint" "ssm" {
-  count               = local.air-gapped ? 1 : 0
+  count               = local.create_endpoints?1:0
   vpc_id              = aws_vpc.vpc.id
   service_name        = "com.amazonaws.${local.region}.ssm"
   vpc_endpoint_type   = "Interface"
@@ -26,7 +26,7 @@ resource "aws_vpc_endpoint" "ssm" {
 }
 
 resource "aws_vpc_endpoint" "ec2messages" {
-  count               = local.air-gapped ? 1 : 0
+  count               = local.create_endpoints?1:0
   vpc_id              = aws_vpc.vpc.id
   service_name        = "com.amazonaws.${local.region}.ec2messages"
   vpc_endpoint_type   = "Interface"
@@ -39,7 +39,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
   }
 }
 resource "aws_vpc_endpoint" "ssmmessages" {
-  count               = local.air-gapped ? 1 : 0
+  count               = local.create_endpoints?1:0
   vpc_id              = aws_vpc.vpc.id
   service_name        = "com.amazonaws.${local.region}.ssmmessages"
   vpc_endpoint_type   = "Interface"
@@ -53,7 +53,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 
 
 resource "aws_vpc_endpoint" "ec2" {
-  count             = local.air-gapped ? 1 : 0
+  count             = local.create_endpoints?1:0
   vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${local.region}.ec2"
   vpc_endpoint_type = "Interface"
@@ -67,7 +67,7 @@ resource "aws_vpc_endpoint" "ec2" {
 
 
 resource "aws_vpc_endpoint" "kms" {
-  count             = local.air-gapped ? 1 : 0
+  count             = local.create_endpoints?1:0
   vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${local.region}.kms"
   vpc_endpoint_type = "Interface"
@@ -81,7 +81,7 @@ resource "aws_vpc_endpoint" "kms" {
 
 
 resource "aws_vpc_endpoint" "cloudwatch" {
-  count             = local.air-gapped ? 1 : 0
+  count             = local.create_endpoints?1:0
   vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${local.region}.logs"
   vpc_endpoint_type = "Interface"
