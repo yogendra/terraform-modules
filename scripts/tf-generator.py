@@ -9,10 +9,13 @@ def main():
   az_list = arg.az_list
   generate:str = arg.generate.lower()
 
+  if generate == "default-az-list" :
+      from json import dumps,loads
+      print(dumps(loads(DEFAULT_AZ_LIST)))
   if generate == 'all' or generate == 'providers':
       print(generate_provider(az_list, arg.tags))
   if generate == 'all' or generate == 'vpc-config':
-      print(generate_vpc_config(az_list, project_cidr=arg.project_cidr, style=arg.subnet_style, subnets=arg.subnet, subnet_suffix=arg.subnet_suffix, prefix=arg.prefix, use_nat=arg.use_nat, air_gapped=arg.air_gapped))
+      print(generate_vpc_config(az_list, arg))
   if generate == 'all' or generate == 'vpc' :
       print(generate_vpc(az_list, prefix=arg.prefix, project_cidr=arg.project_cidr, module_source=arg.vpc_module_source))
   if generate == 'all' or generate == 'vpc-peering':
@@ -36,11 +39,20 @@ provider "aws" {{
   return providers
 
 
-def generate_vpc_config(az_list, project_cidr:str, style:str, subnets:list, subnet_suffix:int, prefix:str, use_nat:bool, air_gapped:bool):
+def generate_vpc_config(az_list, arg):
+
+  project_cidr:str=arg.project_cidr
+  subnet_style:str=arg.subnet_style
+  subnet:list=arg.subnet
+  subnet_suffix:int=arg.subnet_suffix
+  prefix:str=arg.prefix
+  use_nat:bool=arg.use_nat
+  air_gapped:bool=arg.air_gapped
+
   vpc_config=""
-  az_subnets = ["public", "private"] if subnets is None else subnets
+  az_subnets = ["public", "private"] if subnet is None else subnet
   project_suffix = int(project_cidr.split("/")[1])
-  basic = style == "basic"
+  basic = subnet_style == "basic"
   from json import dumps
   # create a vpc for each region
   vpc = {}
@@ -152,7 +164,8 @@ def _as_tf_obj(o, size=2, indent=0):
     case str():
       return f'"{o}"'
     case bool():
-      return 'true' if o else 'false'
+      print ("-------------------------" + str(o))
+      return 'true' if o == True else 'false'
     case int():
       return o
     case dict():
@@ -243,25 +256,7 @@ def _process_args():
     dest="az_list",
     type=_az_list,
     required=False,
-    default="""{
-      "ap-south-1": ["ap-south-1a", "ap-south-1b", "ap-south-1c"],
-      "eu-north-1": ["eu-north-1a", "eu-north-1b", "eu-north-1c"],
-      "eu-west-3": ["eu-west-3a", "eu-west-3b", "eu-west-3c"],
-      "eu-west-2": ["eu-west-2a", "eu-west-2b", "eu-west-2c"],
-      "eu-west-1": ["eu-west-1a", "eu-west-1b", "eu-west-1c"],
-      "ap-northeast-3": ["ap-northeast-3a", "ap-northeast-3b", "ap-northeast-3c"],
-      "ap-northeast-2": [ "ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d" ],
-      "ap-northeast-1": ["ap-northeast-1a", "ap-northeast-1c", "ap-northeast-1d"],
-      "ca-central-1": ["ca-central-1a", "ca-central-1b", "ca-central-1d"],
-      "sa-east-1": ["sa-east-1a", "sa-east-1b", "sa-east-1c"],
-      "ap-southeast-1": ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"],
-      "ap-southeast-2": ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"],
-      "eu-central-1": ["eu-central-1a", "eu-central-1b", "eu-central-1c"],
-      "us-east-1": [ "us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d", "us-east-1e", "us-east-1f"],
-      "us-east-2": ["us-east-2a", "us-east-2b", "us-east-2c"],
-      "us-west-1": ["us-west-1a", "us-west-1c"],
-      "us-west-2": ["us-west-2a", "us-west-2b", "us-west-2c", "us-west-2d"]
-    }""",
+    default=DEFAULT_AZ_LIST,
     help='JSON file name to read az mapping. Format is [ { "region1": ["region1-az-1",...],... }]'
   )
   parser.add_argument(
@@ -282,7 +277,8 @@ def _process_args():
     "--air-gapped",
     default=True,
     type=bool,
-    help="Setup VPC with Airgapped"
+    action=argparse.BooleanOptionalAction,
+    help="Setup VPC with Airgapped."
   )
 
   parser.add_argument(
@@ -290,25 +286,26 @@ def _process_args():
     dest="use_nat",
     default=False,
     type=bool,
+    action=argparse.BooleanOptionalAction,
     help="Setup VPC with NAT GW"
   )
 
   parser.add_argument(
     "-g", "--generate",
-    choices=['all','vpc', 'vpc-config', 'providers','vpc-peering'],
+    choices=['all','vpc', 'vpc-config', 'providers','vpc-peering', "default-az-list"],
     default='all',
     help="Generate terraform specific TF script"
   )
   parser.add_argument(
     "--vpc-module-source",
     dest="vpc_module_source",
-    help="Source location for VPC module. Default: git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-basic",
+    help="Source location for VPC module.",
     default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-basic"
   )
   parser.add_argument(
     "--vpc-peering-module-source",
     dest="vpc_peering_module_source",
-    help="Source location for VPC module. Default: git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-peering",
+    help="Source location for VPC module.",
     default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-peering"
   )
   parser.add_argument(
@@ -328,11 +325,11 @@ def _process_args():
     dest="subnet_style",
     choices=["basic", "advance"],
     default="basic",
-    help="(Optional) Type of subnet type. basic -> private and public. advance -> ingress, egress, app, db, mgmt, devops. You can customize the list with --subnets argument"
+    help="Type of subnet type. basic -> private and public. advance -> ingress, egress, app, db, mgmt, devops. You can customize the list with --subnets argument"
   )
   parser.add_argument(
     "--subnet",
-    help="(Optional) Subnet names (multiple). Used only in basic subnet style configuration. Default: public, private",
+    help="(Optional) Subnet names (multiple). Used only in basic subnet style configuration. (default: public, private)",
     nargs="*",
     action="extend"
   )
@@ -341,7 +338,8 @@ def _process_args():
     dest="subnet_suffix",
     required=False,
     type=int,
-    help="(Optional) Subnet suffix. Used only in basic subnet style configuration."
+    help="(Optional) Subnet suffix. Used only in basic subnet style configuration.",
+    default=24
   )
 
 
@@ -364,5 +362,26 @@ class TagAction(argparse.Action):
         d[k] = v
         setattr(args, self.dest, d)
 
+# update with aws cli command
+DEFAULT_AZ_LIST = """{
+      "ap-south-1"    : ["ap-south-1a"    , "ap-south-1b"    , "ap-south-1c"      ],
+      "ap-southeast-1": ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"  ],
+      "ap-southeast-2": ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"  ],
+      "ap-southeast-3": ["ap-southeast-3a", "ap-southeast-3b", "ap-southeast-3c"  ],
+      "ap-northeast-3": ["ap-northeast-3a", "ap-northeast-3b", "ap-northeast-3c"  ],
+      "ap-northeast-2": ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c", "ap-northeast-2d" ],
+      "ap-northeast-1": ["ap-northeast-1a", "ap-northeast-1c", "ap-northeast-1d"  ],
+      "ca-central-1"  : ["ca-central-1a"  , "ca-central-1b"  , "ca-central-1d"    ],
+      "eu-central-1"  : ["eu-central-1a"  , "eu-central-1b"  , "eu-central-1c"    ],
+      "eu-north-1"    : ["eu-north-1a"    , "eu-north-1b"    , "eu-north-1c"      ],
+      "eu-west-1"     : ["eu-west-1a"     , "eu-west-1b"     , "eu-west-1c"       ],
+      "eu-west-2"     : ["eu-west-2a"     , "eu-west-2b"     , "eu-west-2c"       ],
+      "eu-west-3"     : ["eu-west-3a"     , "eu-west-3b"     , "eu-west-3c"       ],
+      "sa-east-1"     : ["sa-east-1a"     , "sa-east-1b"     , "sa-east-1c"       ],
+      "us-east-1"     : ["us-east-1a"     , "us-east-1b"     , "us-east-1c"     , "us-east-1d", "us-east-1e", "us-east-1f"],
+      "us-east-2"     : ["us-east-2a"     , "us-east-2b"     , "us-east-2c"       ],
+      "us-west-1"     : ["us-west-1a"     , "us-west-1c"       ],
+      "us-west-2"     : ["us-west-2a"     , "us-west-2b"     , "us-west-2c"     , "us-west-2d"]
+    }"""
 if __name__  == '__main__':
   main()
