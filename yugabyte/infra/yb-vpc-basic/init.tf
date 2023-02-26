@@ -18,5 +18,7 @@ locals {
   region = var.config.region
   air-gapped = var.config.air-gapped
   use-nat = var.config.use-nat
+  create_endpoints = local.air-gapped //|| !local.use-nat
+  create_igw = !local.air-gapped
   create_nat_gw = (!local.air-gapped) && local.use-nat
 }
