@@ -1,0 +1,35 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug: vpc-config - basic",
+      "type": "python",
+      "request": "launch",
+      "program": "${cwd}/scripts/tf-generator.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["-g", "vpc-config"]
+    },
+    {
+      "name": "Debug: vpc-config - advance",
+      "type": "python",
+      "request": "launch",
+      "program": "${cwd}/scripts/tf-generator.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["-g", "vpc-config", "--subnet-style", "advance"]
+    },
+    {
+      "name": "Debug: vpc-config - basic with 4 subnets",
+      "type": "python",
+      "request": "launch",
+      "program": "${cwd}/scripts/tf-generator.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["-g", "vpc-config", "--subnet", "ingress", "--subnet", "app", "--subnet", "db", "--subnet", "mgmt", "--subnet-suffix", "25"]
+    },
+  ]
+}
