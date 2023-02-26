@@ -299,13 +299,13 @@ def _process_args():
     "--vpc-module-source",
     dest="vpc_module_source",
     help="Source location for VPC module.",
-    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-basic"
+    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/aws/vpc"
   )
   parser.add_argument(
     "--vpc-peering-module-source",
     dest="vpc_peering_module_source",
     help="Source location for VPC module.",
-    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/yb-vpc-peering"
+    default="git::https://github.com/yogendra/terraform-modules.git//yugabyte/infra/aws/vpc-peering"
   )
   parser.add_argument(
     "--project-cidr",
