@@ -23,7 +23,6 @@ resource "aws_iam_role" "yba" {
   })
 }
 
-
 resource "aws_iam_instance_profile" "yba" {
   name = "${var.prefix}-YBAInstanceProfile"
   role = aws_iam_role.yba.name
@@ -147,4 +146,35 @@ resource "aws_iam_policy" "yba" {
       }
     ]
   })
+}
+
+
+
+resource "aws_iam_role" "ssm" {
+  name = "${var.prefix}-RoleWithSSMAndS3"
+
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/AmazonSSMPatchAssociation",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  ]
+
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Action    = "sts:AssumeRole"
+        Effect    = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "ssm" {
+  name = "${var.prefix}-SSMInstanceProfile"
+  role = aws_iam_role.ssm.name
 }
