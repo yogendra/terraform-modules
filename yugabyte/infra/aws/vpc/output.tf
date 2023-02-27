@@ -39,7 +39,12 @@ output "allow-remote-prefix-list-id"{
 output "ssh-keypairs" {
   value = aws_key_pair.keypair[*].key_name
 }
-
+output "config" {
+  value = var.config
+}
+output "project_config"{
+  value = var.project_config
+}
 
 
 # data "aws_subnet" "private" {
