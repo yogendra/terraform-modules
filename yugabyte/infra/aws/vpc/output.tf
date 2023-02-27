@@ -13,7 +13,7 @@ output "sg-yba" {
   value = aws_security_group.yba-node.id
 }
 output "sg-allow-remote"{
-  value = aws_security_group.allow-remote.id
+  value = one(aws_security_group.allow-remote.*.id)
 }
 
 output "sg-allow-egress"{
@@ -33,7 +33,7 @@ output "private-subnets" {
 }
 
 output "allow-remote-prefix-list-id"{
-  value = aws_ec2_managed_prefix_list.allow-remote.id
+  value = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
 }
 
 output "ssh-keypairs" {
