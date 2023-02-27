@@ -255,6 +255,7 @@ resource "aws_security_group" "allow-egress" {
   }
 }
 resource "aws_security_group" "allow-remote" {
+  count = local.create_mpl? 1 : 0
   name        = "${local.prefix}-allow-remote"
   description = "Allow Remote IPs"
   vpc_id      = aws_vpc.vpc.id
@@ -264,7 +265,7 @@ resource "aws_security_group" "allow-remote" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    prefix_list_ids  = [aws_ec2_managed_prefix_list.allow-remote.id]
+    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
   }
   tags = {
     Name = "${local.prefix}-allow-remote"
@@ -273,6 +274,7 @@ resource "aws_security_group" "allow-remote" {
 
 
 resource "aws_ec2_managed_prefix_list" "allow-remote" {
+  count = local.create_mpl? 1 : 0
   name           = "${local.prefix}-allow-remote"
   address_family = "IPv4"
   max_entries    = 20
@@ -281,9 +283,9 @@ resource "aws_ec2_managed_prefix_list" "allow-remote" {
   }
 }
 resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
-  for_each = var.project_config.remote-ips
+  for_each = local.create_mpl? var.project_config.remote-ips : {}
   cidr           = "${each.value}/32"
   description    = "${each.key}"
-  prefix_list_id = aws_ec2_managed_prefix_list.allow-remote.id
+  prefix_list_id = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
 }
 
