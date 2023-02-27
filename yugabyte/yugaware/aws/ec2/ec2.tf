@@ -1,16 +1,10 @@
-resource "aws_key_pair" "yba" {
-  key_name_prefix = var.prefix
-  public_key = var.public_key
-  tags = var.tags
-}
-
 resource "aws_instance" "yba" {
-  ami           = var.yba-portal-ami
-  instance_type = var.yba-instance-type
-  key_name = aws_key_pair.yba.key_name
+  ami                  = var.yba-portal-ami
+  instance_type        = var.yba-instance-type
+  key_name             = var.key-name
   iam_instance_profile = var.yba-iam-instance-profile
-  monitoring = true
-  subnet_id = var.yba-subnet
+  monitoring           = true
+  subnet_id            = var.yba-subnet
   vpc_security_group_ids = [
     var.yba-security-group
   ]

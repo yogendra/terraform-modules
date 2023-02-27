@@ -2,9 +2,9 @@ variable "prefix"{
   type = string
   description = "Resource prefix"
 }
-variable "public_key"{
+variable "key-name"{
   type = string
-  description = "Public key to add to the account for yugaware"
+  description = "Public key name to use for yugaware"
 }
 variable "yba-db-password" {
   type        = string
