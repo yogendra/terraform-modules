@@ -39,3 +39,27 @@ output "allow-remote-prefix-list-id"{
 output "ssh-keypairs" {
   value = aws_key_pair.keypair[*].key_name
 }
+
+
+
+# data "aws_subnet" "private" {
+#   for_each = aws_subnet.private[*].id
+#   id       = each.value
+# }
+# data "aws_subnet" "public" {
+#   for_each = aws_subnet.public[*].id
+#   id       = each.value
+# }
+output "private-subnet-by-az"{
+  value = {
+    for subnet in aws_subnet.private[*] : subnet.availability_zone => subnet.id...
+  }
+
+}
+
+output "public-subnet-by-az"{
+  value = {
+    for subnet in aws_subnet.public[*] : subnet.availability_zone => subnet.id...
+  }
+
+}
