@@ -16,6 +16,7 @@ locals {
   })
   installYugaware = file("${path.module}/scripts/install-yugaware.sh")
   setupYugaware   = file("${path.module}/scripts/setup-yugaware.py")
+  cloud_providers =
   ybCloudConfig = {
     customer = {
       code     = var.yba-environment-type
@@ -23,7 +24,7 @@ locals {
       password = var.yba-superadmin-password
       name     = var.yba-superadmin-name
     },
-    portal = "https://${local.portal-internal-fqdn}"
+    portal    = "https://${local.portal-internal-fqdn}"
     providers = [
       {
         airGapInstall = !var.yba-online-install
@@ -32,7 +33,7 @@ locals {
           HOSTED_ZONE_ID   = aws_route53_zone.internal-db-zone.zone_id
           HOSTED_ZONE_NAME = "${var.internal_db_domain}."
         }
-        name    = "aws"
+        name    = "aws-local"
         sshPort = var.yba-db-ssh-port
         sshUser = var.yba-db-ssh-user
         regions = [
@@ -54,12 +55,12 @@ locals {
           }
         ]
       }
-    ],
+    ]
     kms_configs = [
       {
-        type = "AWS",
+        type = "AWS"
         config = {
-          name       = "aws-kms",
+          name       = "aws-kms"
           AWS_REGION = var.region
         }
       }
@@ -88,7 +89,7 @@ locals {
     serverCert      = tls_self_signed_cert.portal-01.cert_pem
     cloudConfigJson = jsonencode(local.ybCloudConfig)
     stagingBucket   = "s3://${aws_s3_bucket.yba-packages.id}"
-    onlineInstall   = var.yba-online-install ? "1"  : "0"
+    onlineInstall   = var.yba-online-install ? "1" : "0"
   })
 }
 
