@@ -45,16 +45,6 @@ output "config" {
 output "project_config"{
   value = var.project_config
 }
-
-
-# data "aws_subnet" "private" {
-#   for_each = aws_subnet.private[*].id
-#   id       = each.value
-# }
-# data "aws_subnet" "public" {
-#   for_each = aws_subnet.public[*].id
-#   id       = each.value
-# }
 output "private-subnet-by-az"{
   value = {
     for subnet in aws_subnet.private[*] : subnet.availability_zone => subnet.id...
