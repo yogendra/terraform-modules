@@ -92,12 +92,8 @@ locals {{
   project_config = {{
     cidr = "{project_cidr}"
     prefix = "{prefix}",
-    ssh-public-keys = [
-      // SSH Keys go here (Example: "key1","key2"...)
-    ]
-    remote-ips = {{
-      // Allow IPs go here in the "KEY" = "VALUE" pair (Example: "yogi" = "127.0.0.1")
-    }}
+    ssh-public-keys = local.ssh-public-keys
+    remote-ips = local.remote-ips
   }}
   vpc_config = {_as_tf_obj(vpc, indent=2)}
 }}
