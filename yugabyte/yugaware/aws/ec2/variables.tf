@@ -107,7 +107,10 @@ variable "az-list"{
   type = list(string)
 }
 
-
+variable "local-provider-name"{
+  type = string
+  default = "local-aws"
+}
 variable "vpc_id"{
   type = string
   description = "VPC ID"
