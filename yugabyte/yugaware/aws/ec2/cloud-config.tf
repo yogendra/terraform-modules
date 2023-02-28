@@ -33,7 +33,7 @@ locals {
           HOSTED_ZONE_ID   = aws_route53_zone.internal-db-zone.zone_id
           HOSTED_ZONE_NAME = "${var.internal_db_domain}."
         }
-        name    = "aws-local"
+        name    = var.local-provider-name
         sshPort = var.yba-db-ssh-port
         sshUser = var.yba-db-ssh-user
         regions = [
