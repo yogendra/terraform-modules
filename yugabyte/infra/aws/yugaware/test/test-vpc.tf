@@ -36,7 +36,7 @@ locals {
       sg-allow-remote = m.sg-allow-remote
       sg-allow-internal = m.sg-allow-internal
       sg-allow-egress = m.sg-allow-egress
-      ssh-keypairs = m.ssh-keypairs
+      key-names = m.key-names
       private-subnet-by-az = m.private-subnet-by-az
       private-subnets = m.private-subnets
       public-subnet-by-az = m.public-subnet-by-az
