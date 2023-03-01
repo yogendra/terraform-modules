@@ -118,8 +118,36 @@ module "{module_name}" {{
 
 }}
 """
-  tf_vpc_module_names = _as_tf_obj( { "vpc_modules" : vpc_module_names }, 2,1 )
-  vpcs += f"locals {tf_vpc_module_names}"
+  vpc_module_names = ",\n    ".join(map(lambda x: f' module.{x}', vpc_module_names))
+
+  vpcs += f"""
+locals {{
+  vpc_modules = [
+    {vpc_module_names}
+  ]
+}}
+"""
+  vpcs +="""
+locals {
+  vpc-by-region = {
+    for m in local.vpc_modules : m.config.region => {
+      allow-remote-prefix-list-id = m.allow-remote-prefix-list-id
+      sg-yba = m.sg-yba
+      sg-yb-db-nodes = m.sg-yb-db-nodes
+      sg-ingress = m.sg-ingress
+      sg-allow-remote = m.sg-allow-remote
+      sg-allow-internal = m.sg-allow-internal
+      sg-allow-egress = m.sg-allow-egress
+      ssh-keypairs = m.ssh-keypairs
+      private-subnet-by-az = m.private-subnet-by-az
+      private-subnets = m.private-subnets
+      public-subnet-by-az = m.public-subnet-by-az
+      public-subnets = m.public-subnets
+      vpc_id = m.vpc_id
+    }
+  }
+}
+"""
   return vpcs
 
 def generate_peering(az_list, prefix:str, module_source:str):
