@@ -18,12 +18,14 @@ module "vpc-ap-southeast-2" {
   config = local.vpc_config.ap-southeast-2
 
 }
+
 locals {
-    vpc_modules = [
-      "vpc-ap-southeast-1",
-      "vpc-ap-southeast-2"
-    ]
-  }
+  vpc_modules = [
+     module.vpc-ap-southeast-1,
+     module.vpc-ap-southeast-2
+  ]
+}
+
 locals {
   vpc-by-region = {
     for m in local.vpc_modules : m.config.region => {
