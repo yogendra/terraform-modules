@@ -46,7 +46,7 @@ then
   ./install.sh airgap local-address="$HOST_IP"  private-address="$HOST_IP" fast-timeouts
   )
 else
-  curl -sSL https://get.replicated.com/docker | sudo bash -s -- local-address="$HOST_IP"  private-address="$HOST_IP" fast-timeouts no-proxy skip-preflights no-public-address
+  curl -sSL https://get.replicated.com/docker | sudo bash -s -- local-address="$HOST_IP"  private-address="$HOST_IP" fast-timeouts no-proxy skip-preflights no-docker no-public-address
 fi
 echo "$YB_PORTAL: Not up. Waiting.."
 while ! curl -sSkLo /dev/null ${YW_API}/customer_count -f &> /dev/null
