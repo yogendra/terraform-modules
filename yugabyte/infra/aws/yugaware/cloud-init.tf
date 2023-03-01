@@ -12,14 +12,14 @@ locals {
       name    = provider.name
       sshPort = provider.ssh-port
       sshUser = provider.ssh-user
-      regions = {
-        for region, config in provider.regions: region =>
+      regions = [
+        for region,config in provider.regions:
           {
             code    = region
             name    = region
             ybImage = lookup(local.amis.ybdb, region)
             zones = [
-              for az, subnet in config.az-subnet : {
+              for az, subnet in config.az-subnets : {
                 code   = az
                 name   = az
                 subnet = subnet
@@ -30,13 +30,13 @@ locals {
               sg_id        = config.security-group
             }
           }
-      }
+      ]
     }
   ]
 
 
 
-  portal-internal-fqdn = "portal-01.${var.internal-db-domain}"
+  portal-internal-fqdn = "localhost"
   yugawareLicense      = filebase64(var.yba-license-file)
 
   replicatedConf = templatefile("${path.module}/templates/replicated.conf", {
@@ -88,8 +88,8 @@ locals {
     yugawareLicense = local.yugawareLicense
     installYugaware = local.installYugaware
     setupYugaware   = local.setupYugaware
-    serverKey       = tls_private_key.portal.private_key_pem
-    serverCert      = tls_self_signed_cert.portal-01.cert_pem
+    serverKey       = var.yba-tls-key-pem != "" ? var.yba-tls-key-pem : tls_private_key.portal[0].private_key_pem
+    serverCert      = var.yba-tls-cert-pem != "" ? var.yba-tls-cert-pem : tls_self_signed_cert.portal-01[0].cert_pem
     cloudConfigJson = jsonencode(local.ybCloudConfig)
     stagingBucket   = "s3://${aws_s3_bucket.yba-packages.id}"
     onlineInstall   = var.yba-online-install ? "1" : "0"
