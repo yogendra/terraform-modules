@@ -101,10 +101,12 @@ locals {{
 
 
 def generate_vpc(az_list,prefix:str,  project_cidr:str, module_source:str):
+  vpc_module_names = []
   vpcs=""
   for region in _region_list(az_list):
     provider_alias = _provider_alias(region)
     module_name = _vpc_module_name(region)
+    vpc_module_names.append(module_name)
     vpcs += f"""
 module "{module_name}" {{
   source = "{module_source}"
@@ -115,12 +117,13 @@ module "{module_name}" {{
   config = local.vpc_config.{region}
 
 }}
-    """
+"""
+  tf_vpc_module_names = _as_tf_obj( { "vpc_modules" : vpc_module_names }, 2,1 )
+  vpcs += f"locals {tf_vpc_module_names}"
   return vpcs
 
 def generate_peering(az_list, prefix:str, module_source:str):
   regions = _region_list(az_list)
-
   peer_modules=""
   for ids, src in enumerate(regions):
     for idd, dest in enumerate(regions):
@@ -131,8 +134,9 @@ def generate_peering(az_list, prefix:str, module_source:str):
       dest_provider = _provider_alias(dest)
       src_module = _vpc_module_name(src)
       dest_module = _vpc_module_name(dest)
+      peer_module_name = f"peer-{src}-{dest}"
       peer_modules+=f"""
-module "peer-{src}-{dest}" {{
+module "{peer_module_name}" {{
   source = "{module_source}"
   src_vpc_id =  module.{src_module}.vpc_id
   dest_vpc_id = module.{dest_module}.vpc_id
