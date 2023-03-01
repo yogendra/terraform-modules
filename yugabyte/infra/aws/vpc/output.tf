@@ -49,7 +49,9 @@ output "public-subnet-by-az"{
   value = {
     for subnet in aws_subnet.public[*] : subnet.availability_zone => subnet.id...
   }
-
+}
+output "route-tables" {
+  value = concat([aws_vpc.vpc.default_route_table_id], aws_route_table.private.*.id, aws_route_table.public.*.id, aws_default_route_table.default.id)
 }
 output "key-names"{
   value = aws_key_pair.keypair.*.key_name
