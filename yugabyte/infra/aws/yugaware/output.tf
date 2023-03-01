@@ -34,7 +34,7 @@ output "debug-tips" {
   Replicated Port Forward
     aws ssm start-session --target ${i} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["8800"],"localPortNumber":["8800"]}'
   YugabyteDB Anywhere Port Forward
-    aws ssm start-session --target ${i} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["443"],"localPortNumber":["8080"]}'
+    aws ssm start-session --target ${i} --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["443"],"localPortNumber":["3000"]}'
 %{endfor}
   INFO
 }
@@ -48,24 +48,22 @@ output "debug-env" {
     YB_PORTAL='$YB_PORTAL'
     YB_API='$YB_API'
     YB_USER='$YB_USER'
-    YB_PASSWORD='$YB_PASSWORD'"> $PROJECT_DIR/private/.pyenv
+    YB_PASSWORD='$YB_PASSWORD'"> $PROJECT_DIR/private/.env-yba
 
-    echo "Host temp-gcc-yba-portal-01
-      IdentityFile $PWD/poc-usecase1/kp-yugabyte-01-poc-usecase1iena
-      User ec2-user
+    echo "Host ${var.prefix}-yba
+      User cloud-user
       UserKnownHostsFile /dev/null
       StrictHostKeyChecking no
-      ProxyCommand bash -c \"aws ssm start-session --target ${aws_instance.yba.id} --profile $AWS_PROFILE --region ap-southeast-1 --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" > ~/.ssh/configs/temp-gcc-yba-portal-01
+      ProxyCommand bash -c \"aws ssm start-session --target ${aws_instance.yba.id} --profile $AWS_PROFILE --region ap-southeast-1 --document-name AWS-StartSSHSession --parameters 'portNumber=%p'\"" > ~/.ssh/configs/temp-${var.prefix}-yba
 
-    echo aws ssm start-session --target ${aws_instance.yba.id}
+    echo ssh                            : ssh -i ~/.ssh/id_rsa ${var.prefix}-yba
+    echo ssm                            : aws ssm start-session --target ${aws_instance.yba.id}
 
     # Replicated Port Forward
-    echo aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession \
-        --parameters '{"portNumber":["8800"],"localPortNumber":["8800"]}' &
+    echo "ssm port forward to replicated: aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession --parameters '{\"portNumber\":[\"8800\"],\"localPortNumber\":[\"8800\"]}'" &
 
     # YugabyteDB anywhere Port Forward
-    echo aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession \
-        --parameters '{"portNumber":["80"],"localPortNumber":["8080"]}' &
+    echo "ssm port forward to YBA       : aws ssm start-session --target ${aws_instance.yba.id} --document-name AWS-StartPortForwardingSession --parameters '{\"portNumber\":[\"443\"],\"localPortNumber\":[\"3000\"]}'" &
   SSH
 }
 
