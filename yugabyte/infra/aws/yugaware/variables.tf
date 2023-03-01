@@ -51,12 +51,7 @@ variable "yba-instance-type" {
 variable "yb-release" {
   type        = string
   description = "YugabyteDB Version (Example: 2.16.1.0-b50)"
-  default     = "2.16.1.0-b50"
-}
-variable "internal-db-domain" {
-  type        = string
-  description = "Interal DNS domain for DB nodes"
-  default     = "ybdb.internal"
+  default     = "2.17.1.0-b439"
 }
 variable "ybdb-ami" {
   type        = string
@@ -87,6 +82,14 @@ variable tags {
   default = {
 
   }
+}
+variable "yba-tls-cert-pem" {
+  type = string
+  default = ""
+}
+variable "yba-tls-key-pem" {
+  type = string
+  default = ""
 }
 variable "local-provider-name"{
   type = string
