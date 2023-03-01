@@ -1,4 +1,7 @@
 
+output "region" {
+  value = var.config.region
+}
 output "vpc_id"{
   value = aws_vpc.vpc.id
 }
@@ -31,16 +34,8 @@ output "public-subnets" {
 output "private-subnets" {
   value = aws_subnet.private[*].id
 }
-
 output "allow-remote-prefix-list-id"{
   value = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
-}
-
-output "ssh-keypairs" {
-  value = aws_key_pair.keypair[*].key_name
-}
-output "config" {
-  value = var.config
 }
 output "project_config"{
   value = var.project_config
@@ -49,12 +44,13 @@ output "private-subnet-by-az"{
   value = {
     for subnet in aws_subnet.private[*] : subnet.availability_zone => subnet.id...
   }
-
 }
-
 output "public-subnet-by-az"{
   value = {
     for subnet in aws_subnet.public[*] : subnet.availability_zone => subnet.id...
   }
 
+}
+output "key-names"{
+  value = aws_key_pair.keypair.*.key_name
 }
