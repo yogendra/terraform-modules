@@ -6,9 +6,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-locals{
-
-}
 resource "aws_eip" "nat"{
   count = local.create_nat_gw ? 1 : 0
   tags = {
@@ -39,6 +36,13 @@ resource "aws_route" "public-egress" {
 resource "aws_route" "private-egress" {
   count = local.air-gapped ? 0 : 1
   route_table_id = aws_route_table.private.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = local.create_nat_gw?aws_nat_gateway.nat.*.id[0]:aws_internet_gateway.igw.*.id[0]
+}
+
+resource "aws_route" "default-egress" {
+  count = local.air-gapped ? 0 : 1
+  route_table_id = aws_default_route_table.default.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = local.create_nat_gw?aws_nat_gateway.nat.*.id[0]:aws_internet_gateway.igw.*.id[0]
 }

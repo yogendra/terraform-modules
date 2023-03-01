@@ -28,7 +28,7 @@ locals {
 
 locals {
   vpc-by-region = {
-    for m in local.vpc_modules : m.config.region => {
+    for m in local.vpc_modules : m.region => {
       allow-remote-prefix-list-id = m.allow-remote-prefix-list-id
       sg-yba = m.sg-yba
       sg-yb-db-nodes = m.sg-yb-db-nodes
