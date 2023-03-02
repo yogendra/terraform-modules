@@ -20,17 +20,26 @@ resource "aws_vpc_peering_connection" "peer" {
   peer_vpc_id = data.aws_vpc.dest.id
   peer_region = data.aws_region.dest.name
   provider = aws.src
-  requester {
-    allow_remote_vpc_dns_resolution = true
-  }
 
 }
 
 # Accepter's side of the connection.
 resource "aws_vpc_peering_connection_accepter" "peer" {
   vpc_peering_connection_id = aws_vpc_peering_connection.peer.id
-  auto_accept               = true
   provider                  = aws.dest
+  auto_accept               = true
+}
+
+resource "aws_vpc_peering_connection_options" "src-option" {
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.id
+  provider = aws.src
+  requester {
+    allow_remote_vpc_dns_resolution = true
+  }
+}
+resource "aws_vpc_peering_connection_options" "dest-option" {
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.id
+  provider = aws.dest
   accepter {
     allow_remote_vpc_dns_resolution = true
   }
