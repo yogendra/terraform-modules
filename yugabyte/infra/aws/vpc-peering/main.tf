@@ -19,19 +19,11 @@ resource "aws_vpc_peering_connection" "peer" {
   vpc_id      = data.aws_vpc.src.id
   peer_vpc_id = data.aws_vpc.dest.id
   peer_region = data.aws_region.dest.name
-  # auto_accept = true
   provider = aws.src
-  # accepter {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-
-  # requester {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-
-  tags = {
-    Side = "test-Requester"
+  requester {
+    allow_remote_vpc_dns_resolution = true
   }
+
 }
 
 # Accepter's side of the connection.
@@ -39,16 +31,8 @@ resource "aws_vpc_peering_connection_accepter" "peer" {
   vpc_peering_connection_id = aws_vpc_peering_connection.peer.id
   auto_accept               = true
   provider                  = aws.dest
-
-  # accepter {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-
-  # requester {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-  tags = {
-    Side = "test-Accepter"
+  accepter {
+    allow_remote_vpc_dns_resolution = true
   }
 }
 
@@ -96,23 +80,7 @@ locals {
       ]
     )
   )
-
 }
-
-# output "debug" {
-#   value = jsonencode({
-#     "src" = {
-#       "src_rtbl"  = local.src_rtbl_ids,
-#       "dest_cidr" = local.dest_cidrs,
-#       "src_rt"    = local.src_routes,
-#     },
-#     "dest" = {
-#       "dest_rtbl" = local.dest_rtbl_ids,
-#       "src_cidr"  = local.src_cidrs,
-#       "dest_rt"   = local.dest_routes
-#     }
-#   })
-# }
 resource "aws_route" "source_to_dest" {
   count                     = length(local.src_routes)
   route_table_id            = local.src_routes[count.index].tbl
