@@ -5,28 +5,15 @@ resource "aws_route53_zone" "internal-db-zone" {
   }
 }
 locals {
-  yb-provider = [
-    for vpc in local.vpc_modules : {
-      name = vpc.region
-      sg   = vpc.sg-yb-db-nodes
-      zones = [
-        for zone, subnets in vpc.private-subnet-by-az : {
-          name   = zone,
-          subnet = subnets[0]
-        }
-      ]
-    }
-  ]
-
-  aws-local = {
+  yb-aws-cloud-provider-config = {
     name                    = "aws-${local.project_config.prefix}"
     air-gapped              = true
     internal-hosted-zone-id = aws_route53_zone.internal-db-zone.zone_id
-    internal-hosted-domain  = "${local.project_config.prefix}-ybdb.internal",
+    internal-hosted-domain  = aws_route53_zone.internal-db-zone.name
     ssh-port                = 22
     ssh-user                = "ec2-user"
     regions = {
-      for vpc in local.vpc_modules : vpc.region => {
+      for region, vpc in local.vpc-by-region : region => {
         security-group = vpc.sg-yb-db-nodes
         architecture   = "x86_64"
         az-subnets = {
@@ -36,8 +23,6 @@ locals {
     }
   }
 }
-
-
 module "yba" {
   source = "../"
   providers = {
@@ -50,28 +35,26 @@ module "yba" {
   yba-license-file         = "./private/yugaware.rli"
   yba-iam-instance-profile = module.yb-account.yba-instance-profile
   yba-online-install       = true
-  yba-aws-providers        = [local.aws-local]
-
+  yba-aws-providers        = [local.yba-aws-cloud-provider-config]
 }
-
-
 
 output "yba" {
   value = module.yba.yba
 }
 
-
 output "yba-info" {
   value = module.yba.yba-info
 }
-
 
 output "debug-env" {
   value = module.yba.debug-env
 }
 
-
 output "debug-tips" {
   value = module.yba.debug-tips
+}
+
+output "vpc-by-region"{
+  value = local.vpc-by-region
 }
 
