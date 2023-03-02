@@ -37,9 +37,6 @@ output "private-subnets" {
 output "allow-remote-prefix-list-id"{
   value = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
 }
-output "project_config"{
-  value = var.project_config
-}
 output "private-subnet-by-az"{
   value = {
     for subnet in aws_subnet.private[*] : subnet.availability_zone => subnet.id...
@@ -51,7 +48,7 @@ output "public-subnet-by-az"{
   }
 }
 output "route-tables" {
-  value = concat([aws_vpc.vpc.default_route_table_id], aws_route_table.private.*.id, aws_route_table.public.*.id, aws_default_route_table.default.id)
+  value = concat([aws_vpc.vpc.default_route_table_id], aws_route_table.private.*.id, aws_route_table.public.*.id)
 }
 output "key-names"{
   value = aws_key_pair.keypair.*.key_name
