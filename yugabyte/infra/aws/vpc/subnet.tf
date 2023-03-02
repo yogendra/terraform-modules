@@ -7,7 +7,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = local.public_subnets[count.index].public
 
   tags = {
-    Name = "${local.prefix}-pub-${local.public_subnets[count.index].az}"
+    Name = "${var.project_config.prefix}-pub-${local.public_subnets[count.index].az}"
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -17,7 +17,7 @@ resource "aws_subnet" "public" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "${local.prefix}-pub"
+    Name = "${var.project_config.prefix}-pub"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = local.private_subnets[count.index].public
 
   tags = {
-    Name = "${local.prefix}-pvt-${local.private_subnets[count.index].az}"
+    Name = "${var.project_config.prefix}-pvt-${local.private_subnets[count.index].az}"
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -48,7 +48,7 @@ resource "aws_subnet" "private" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "${local.prefix}-pvt"
+    Name = "${var.project_config.prefix}-pvt"
   }
 }
 
@@ -61,6 +61,6 @@ resource "aws_route_table_association" "private" {
 resource "aws_default_route_table" "default" {
   default_route_table_id = aws_vpc.vpc.default_route_table_id
    tags = {
-    Name = "${local.prefix}-default"
+    Name = "${var.project_config.prefix}-default"
   }
 }
