@@ -41,6 +41,7 @@ locals {
       private-subnets = m.private-subnets
       public-subnet-by-az = m.public-subnet-by-az
       public-subnets = m.public-subnets
+      route-tables = m.route-tables
       vpc_id = m.vpc_id
     }
   }
