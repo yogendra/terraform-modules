@@ -26,23 +26,43 @@ resource "aws_nat_gateway" "nat" {
   depends_on = [aws_internet_gateway.igw]
 }
 
-resource "aws_route" "public-egress" {
-  count = local.air-gapped ? 0 : 1
+resource "aws_route" "public-egress-by-nat" {
+  count = local.create_nat_gw ?1 : 0
   route_table_id = aws_route_table.public.id
   destination_cidr_block    = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.igw.*.id[0]
+  gateway_id = aws_internet_gateway.igw[0].id
+}
+resource "aws_route" "public-egress-by-igw" {
+  count = local.air-gapped || local.create_nat_gw ? 0 : 1
+  route_table_id = aws_route_table.public.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw[0].id
 }
 
-resource "aws_route" "private-egress" {
-  count = local.air-gapped ? 0 : 1
+resource "aws_route" "private-egress-by-nat" {
+  count = local.create_nat_gw ? 1 : 0
   route_table_id = aws_route_table.private.id
   destination_cidr_block    = "0.0.0.0/0"
-  gateway_id = local.create_nat_gw?aws_nat_gateway.nat.*.id[0]:aws_internet_gateway.igw.*.id[0]
+  nat_gateway_id = aws_nat_gateway.nat[0].id
 }
 
-resource "aws_route" "default-egress" {
-  count = local.air-gapped ? 0 : 1
+resource "aws_route" "private-egress-by-igw" {
+  count = local.air-gapped ||  local.create_nat_gw ? 0 : 1
+  route_table_id = aws_route_table.private.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw[0].id
+}
+
+resource "aws_route" "default-egress-by-nat" {
+  count = local.create_nat_gw ? 1 : 0
   route_table_id = aws_default_route_table.default.id
   destination_cidr_block    = "0.0.0.0/0"
-  gateway_id = local.create_nat_gw?aws_nat_gateway.nat.*.id[0]:aws_internet_gateway.igw.*.id[0]
+  nat_gateway_id = aws_nat_gateway.nat[0].id
+}
+
+resource "aws_route" "default-egress-by-igw" {
+  count = local.air-gapped || local.create_nat_gw ? 0 : 1
+  route_table_id = aws_default_route_table.default.id
+  destination_cidr_block    = "0.0.0.0/0"
+  nat_gateway_id = aws_internet_gateway.igw[0].id
 }
