@@ -146,23 +146,6 @@ locals {
       vpc_id = m.vpc_id
     }
   }
-  yba-aws-cloud-provider-config = {
-    name                    = "aws-${local.project_config.prefix}"
-    air-gapped              = true
-    internal-hosted-zone-id = aws_route53_zone.internal-db-zone.zone_id
-    internal-hosted-domain  = aws_route53_zone.internal-db-zone.name
-    ssh-port                = 22
-    ssh-user                = "ec2-user"
-    regions = {
-      for region, vpc in local.vpc-by-region : region => {
-        security-group = vpc.sg-yb-db-nodes
-        architecture   = "x86_64"
-        az-subnets = {
-          for zone, subnets in vpc.private-subnet-by-az : zone => subnets[0]
-        }
-      }
-    }
-  }
 }
 """
   return vpcs
