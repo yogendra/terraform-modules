@@ -1,5 +1,5 @@
 resource "aws_security_group" "allow-ingress"{
-  name        = "${local.prefix}-allow-ingress"
+  name        = "${var.project_config.prefix}-allow-ingress"
   description = "Allow Public Ingress Traffic"
   vpc_id      = aws_vpc.vpc.id
   ingress {
@@ -38,12 +38,12 @@ resource "aws_security_group" "allow-ingress"{
     cidr_blocks      = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${local.prefix}-allow-ingress"
+    Name = "${var.project_config.prefix}-allow-ingress"
   }
 }
 
 resource "aws_security_group" "allow-internal"{
-  name        = "${local.prefix}-allow-internal"
+  name        = "${var.project_config.prefix}-allow-internal"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
   ingress {
@@ -61,12 +61,12 @@ resource "aws_security_group" "allow-internal"{
     cidr_blocks      = local.project_cidrs
   }
   tags = {
-    Name = "${local.prefix}-allow-internal"
+    Name = "${var.project_config.prefix}-allow-internal"
   }
 }
 
 resource "aws_security_group" "yba-node" {
-  name        = "${local.prefix}-yba-nodes"
+  name        = "${var.project_config.prefix}-yba-nodes"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
 
@@ -124,11 +124,11 @@ resource "aws_security_group" "yba-node" {
   }
 
   tags = {
-    Name = "${local.prefix}-yba-node"
+    Name = "${var.project_config.prefix}-yba-node"
   }
 }
 resource "aws_security_group" "yb-db-nodes" {
-  name        = "${local.prefix}-yb-db-nodes"
+  name        = "${var.project_config.prefix}-yb-db-nodes"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
 
@@ -233,13 +233,13 @@ resource "aws_security_group" "yb-db-nodes" {
     cidr_blocks      = local.project_cidrs
   }
   tags = {
-    Name = "${local.prefix}-yba-db-node"
+    Name = "${var.project_config.prefix}-yba-db-node"
   }
 }
 
 
 resource "aws_security_group" "allow-egress" {
-  name        = "${local.prefix}-allow-egress"
+  name        = "${var.project_config.prefix}-allow-egress"
   description = "Allow Egress"
   vpc_id      = aws_vpc.vpc.id
 
@@ -251,12 +251,12 @@ resource "aws_security_group" "allow-egress" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${local.prefix}-allow-egress"
+    Name = "${var.project_config.prefix}-allow-egress"
   }
 }
 resource "aws_security_group" "allow-remote" {
   count = local.create_mpl? 1 : 0
-  name        = "${local.prefix}-allow-remote"
+  name        = "${var.project_config.prefix}-allow-remote"
   description = "Allow Remote IPs"
   vpc_id      = aws_vpc.vpc.id
 
@@ -268,18 +268,18 @@ resource "aws_security_group" "allow-remote" {
     prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
   }
   tags = {
-    Name = "${local.prefix}-allow-remote"
+    Name = "${var.project_config.prefix}-allow-remote"
   }
 }
 
 
 resource "aws_ec2_managed_prefix_list" "allow-remote" {
   count = local.create_mpl? 1 : 0
-  name           = "${local.prefix}-allow-remote"
+  name           = "${var.project_config.prefix}-allow-remote"
   address_family = "IPv4"
   max_entries    = 20
   tags = {
-    Name = "${local.prefix}-allow-remote"
+    Name = "${var.project_config.prefix}-allow-remote"
   }
 }
 resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
@@ -288,4 +288,42 @@ resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
   description    = "${each.key}"
   prefix_list_id = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
 }
+
+
+resource "aws_default_security_group" "default"{
+
+  vpc_id      = aws_vpc.vpc.id
+  ingress {
+    description      = "Allow all Internal"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = local.project_cidrs
+  }
+  ingress {
+    description      =  "Allow know remote access"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
+  }
+  egress {
+    description      = "Allow all Internal"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = local.project_cidrs
+  }
+  ingress {
+    description      = "Allow all egress"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "${var.project_config.prefix}-default"
+  }
+}
+
 
