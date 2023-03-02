@@ -6,7 +6,7 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.public.id,aws_route_table.private.id, aws_vpc.vpc.default_route_table_id]
   tags = {
-    Name = "${local.prefix}-s3"
+    Name = "${var.project_config.prefix}-s3"
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_vpc_endpoint" "ssm" {
   subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${local.prefix}-ssm"
+    Name = "${var.project_config.prefix}-ssm"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
   private_dns_enabled = true
   tags = {
 
-    Name = "${local.prefix}-ec2messages"
+    Name = "${var.project_config.prefix}-ec2messages"
   }
 }
 resource "aws_vpc_endpoint" "ssmmessages" {
@@ -47,7 +47,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
   subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${local.prefix}-ssmmessages"
+    Name = "${var.project_config.prefix}-ssmmessages"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_vpc_endpoint" "ec2" {
   subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${local.prefix}-ec2"
+    Name = "${var.project_config.prefix}-ec2"
   }
 }
 
@@ -75,7 +75,7 @@ resource "aws_vpc_endpoint" "kms" {
   subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${local.prefix}-kms"
+    Name = "${var.project_config.prefix}-kms"
   }
 }
 
@@ -89,6 +89,6 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   subnet_ids          = aws_subnet.public[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${local.prefix}-cloudwatch"
+    Name = "${var.project_config.prefix}-cloudwatch"
   }
 }
