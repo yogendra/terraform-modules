@@ -1,6 +1,6 @@
 
 output "region" {
-  value = var.config.region
+  value = local.region
 }
 output "vpc_id"{
   value = aws_vpc.vpc.id
