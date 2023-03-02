@@ -2,7 +2,6 @@ variable "config" {
   type = object({
     air-gapped = bool
     use-nat = bool
-    region = string
     cidrs = list(string),
     zones = list(object({
       name = string,
