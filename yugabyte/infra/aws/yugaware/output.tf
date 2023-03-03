@@ -3,6 +3,9 @@ output "yba" {
   value = aws_instance.yba.id
 }
 
+output "aws-yb-providers" {
+  value = local.aws-yb-providers
+}
 output "yba-info" {
   value = <<-INFO
 ## Package Bucket
