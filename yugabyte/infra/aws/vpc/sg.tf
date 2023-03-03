@@ -293,37 +293,38 @@ resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
 resource "aws_default_security_group" "default"{
 
   vpc_id      = aws_vpc.vpc.id
-  ingress {
-    description      = "Allow all Internal"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
-  }
-  ingress {
-    description      =  "Allow know remote access"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
-  }
-  egress {
-    description      = "Allow all Internal"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
-  }
-  ingress {
-    description      = "Allow all egress"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
   tags = {
     Name = "${var.project_config.prefix}-default"
   }
 }
 
+resource "aws_security_group_rule" "default-internal-ingress"{
+    type             = "ingress"
+    description      = "Allow all intenal traffic"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = local.project_cidrs
+    security_group_id = aws_default_security_group.default.id
+}
+
+resource "aws_security_group_rule" "default-remote-ingress"{
+  type             = "ingress"
+  description      =  "Allow access from well-known remote machines"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
+  security_group_id = aws_default_security_group.default.id
+}
+
+resource "aws_security_group_rule" "default-egress"{
+  type             = "egress"
+  description      = "Allow all egress"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  security_group_id = aws_default_security_group.default.id
+}
 
