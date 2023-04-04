@@ -284,7 +284,7 @@ resource "aws_ec2_managed_prefix_list" "allow-remote" {
 }
 resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
   for_each = local.create_mpl? var.project_config.remote-ips : {}
-  cidr           = "${each.value}/32"
+  cidr           = "${each.value}"
   description    = "${each.key}"
   prefix_list_id = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
 }
