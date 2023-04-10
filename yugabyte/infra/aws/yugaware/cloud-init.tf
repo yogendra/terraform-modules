@@ -18,6 +18,7 @@ locals {
             code    = region
             name    = region
             ybImage = lookup(local.amis.ybdb, region)
+            vpc_id  = config.vpc_id
             zones = [
               for az, subnet in config.az-subnets : {
                 code   = az
