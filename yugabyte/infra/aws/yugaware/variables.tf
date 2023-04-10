@@ -135,6 +135,7 @@ variable "yba-aws-providers" {
             {
               security-group = string
               architecture = string
+              vpc_id = string
               az-subnets = map(string)
             }
           )
