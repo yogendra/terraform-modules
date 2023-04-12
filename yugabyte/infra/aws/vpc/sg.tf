@@ -139,6 +139,13 @@ resource "aws_security_group" "yb-db-nodes" {
     cidr_blocks      = ["0.0.0.0/0"]
   }
   ingress {
+    description =  "Allow incoming from known machines"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
+  }
+  ingress {
     description      = "Allow Master RPC"
     from_port        = 7000
     to_port          = 7000
