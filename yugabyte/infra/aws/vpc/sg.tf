@@ -131,7 +131,13 @@ resource "aws_security_group" "yb-db-nodes" {
   name        = "${var.project_config.prefix}-yb-db-nodes"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
-
+  egress {
+    description =  "Allow all"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
   ingress {
     description      = "Allow Master RPC"
     from_port        = 7000
