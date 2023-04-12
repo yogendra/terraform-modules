@@ -132,11 +132,11 @@ resource "aws_security_group" "yb-db-nodes" {
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
   egress {
-    description =  "Allow all"
+    description =  "Allow egress to all destinations"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
+    cidr_blocks      = ["0.0.0.0/0"]
   }
   ingress {
     description =  "Allow incoming from known machines"
