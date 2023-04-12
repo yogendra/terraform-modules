@@ -136,7 +136,7 @@ resource "aws_security_group" "yb-db-nodes" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    cidr_blocks      = local.project_cidrs
   }
   ingress {
     description =  "Allow incoming from known machines"
