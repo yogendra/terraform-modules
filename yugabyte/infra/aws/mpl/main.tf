@@ -1,19 +1,4 @@
-variable "description" {
-  type = string
-  description = "Description for MPL entry"
-}
-variable "cidrs" {
-  type = list(string)
-  description = "List of CIDRs to add to entry"
-}
-
-variable "prefix-list-name" {
-  type = string
-  description = "Name of the managed prefix list"
-}
-
-
-module "vpc-af-south-1" {
+module "mpl-af-south-1" {
   source = "./regional-work"
   providers = {
     aws = aws.af_south_1
@@ -23,7 +8,7 @@ module "vpc-af-south-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-east-1" {
+module "mpl-ap-east-1" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_east_1
@@ -33,7 +18,7 @@ module "vpc-ap-east-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-northeast-1" {
+module "mpl-ap-northeast-1" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_northeast_1
@@ -43,7 +28,7 @@ module "vpc-ap-northeast-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-northeast-2" {
+module "mpl-ap-northeast-2" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_northeast_2
@@ -53,7 +38,7 @@ module "vpc-ap-northeast-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-northeast-3" {
+module "mpl-ap-northeast-3" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_northeast_3
@@ -63,7 +48,7 @@ module "vpc-ap-northeast-3" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-south-1" {
+module "mpl-ap-south-1" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_south_1
@@ -73,7 +58,7 @@ module "vpc-ap-south-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-south-2" {
+module "mpl-ap-south-2" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_south_2
@@ -83,7 +68,7 @@ module "vpc-ap-south-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-southeast-1" {
+module "mpl-ap-southeast-1" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_southeast_1
@@ -93,7 +78,7 @@ module "vpc-ap-southeast-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-southeast-2" {
+module "mpl-ap-southeast-2" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_southeast_2
@@ -103,7 +88,7 @@ module "vpc-ap-southeast-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-southeast-3" {
+module "mpl-ap-southeast-3" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_southeast_3
@@ -113,7 +98,7 @@ module "vpc-ap-southeast-3" {
   cidrs = var.cidrs
 }
 
-module "vpc-ap-southeast-4" {
+module "mpl-ap-southeast-4" {
   source = "./regional-work"
   providers = {
     aws = aws.ap_southeast_4
@@ -123,7 +108,7 @@ module "vpc-ap-southeast-4" {
   cidrs = var.cidrs
 }
 
-module "vpc-ca-central-1" {
+module "mpl-ca-central-1" {
   source = "./regional-work"
   providers = {
     aws = aws.ca_central_1
@@ -133,7 +118,7 @@ module "vpc-ca-central-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-central-1" {
+module "mpl-eu-central-1" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_central_1
@@ -143,7 +128,7 @@ module "vpc-eu-central-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-central-2" {
+module "mpl-eu-central-2" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_central_2
@@ -153,7 +138,7 @@ module "vpc-eu-central-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-north-1" {
+module "mpl-eu-north-1" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_north_1
@@ -163,7 +148,7 @@ module "vpc-eu-north-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-south-1" {
+module "mpl-eu-south-1" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_south_1
@@ -173,7 +158,7 @@ module "vpc-eu-south-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-south-2" {
+module "mpl-eu-south-2" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_south_2
@@ -183,7 +168,7 @@ module "vpc-eu-south-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-west-1" {
+module "mpl-eu-west-1" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_west_1
@@ -193,7 +178,7 @@ module "vpc-eu-west-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-west-2" {
+module "mpl-eu-west-2" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_west_2
@@ -203,7 +188,7 @@ module "vpc-eu-west-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-eu-west-3" {
+module "mpl-eu-west-3" {
   source = "./regional-work"
   providers = {
     aws = aws.eu_west_3
@@ -213,7 +198,7 @@ module "vpc-eu-west-3" {
   cidrs = var.cidrs
 }
 
-module "vpc-me-central-1" {
+module "mpl-me-central-1" {
   source = "./regional-work"
   providers = {
     aws = aws.me_central_1
@@ -223,7 +208,7 @@ module "vpc-me-central-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-me-south-1" {
+module "mpl-me-south-1" {
   source = "./regional-work"
   providers = {
     aws = aws.me_south_1
@@ -233,7 +218,7 @@ module "vpc-me-south-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-sa-east-1" {
+module "mpl-sa-east-1" {
   source = "./regional-work"
   providers = {
     aws = aws.sa_east_1
@@ -243,7 +228,7 @@ module "vpc-sa-east-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-us-east-1" {
+module "mpl-us-east-1" {
   source = "./regional-work"
   providers = {
     aws = aws.us_east_1
@@ -253,7 +238,7 @@ module "vpc-us-east-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-us-east-2" {
+module "mpl-us-east-2" {
   source = "./regional-work"
   providers = {
     aws = aws.us_east_2
@@ -263,7 +248,7 @@ module "vpc-us-east-2" {
   cidrs = var.cidrs
 }
 
-module "vpc-us-west-1" {
+module "mpl-us-west-1" {
   source = "./regional-work"
   providers = {
     aws = aws.us_west_1
@@ -273,7 +258,7 @@ module "vpc-us-west-1" {
   cidrs = var.cidrs
 }
 
-module "vpc-us-west-2" {
+module "mpl-us-west-2" {
   source = "./regional-work"
   providers = {
     aws = aws.us_west_2
