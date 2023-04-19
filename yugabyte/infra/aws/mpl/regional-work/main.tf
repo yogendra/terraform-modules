@@ -22,7 +22,7 @@ variable "description" {
 
 
 data "aws_ec2_managed_prefix_list" "prefix_list"{
-  name = var.prefix_list_name
+  name = var.prefix-list-name
 }
 
 resource "aws_ec2_managed_prefix_list_entry" "entries" {
