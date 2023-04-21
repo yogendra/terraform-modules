@@ -127,6 +127,18 @@ resource "aws_security_group" "yba-node" {
     Name = "${var.project_config.prefix}-yba-node"
   }
 }
+resource "aws_security_group_rule" "yba-node-allow-mpl" {
+  count             = local.create_mpl? 1 : 0
+  type              = "ingress"
+  description       =  "Allow incoming from known machines"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.yba-node.id
+  prefix_list_ids   = aws_ec2_managed_prefix_list.allow-remote.*.id
+}
+
+
 resource "aws_security_group" "yb-db-nodes" {
   name        = "${var.project_config.prefix}-yb-db-nodes"
   description = "Allow Yugabyte DB Traffic"
@@ -137,13 +149,6 @@ resource "aws_security_group" "yb-db-nodes" {
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
-  }
-  ingress {
-    description =  "Allow incoming from known machines"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
   }
   ingress {
     description      = "Allow Master RPC"
@@ -249,7 +254,16 @@ resource "aws_security_group" "yb-db-nodes" {
     Name = "${var.project_config.prefix}-yba-db-node"
   }
 }
-
+resource "aws_security_group_rule" "yb-db-nodes-allow-mpl" {
+  count             = local.create_mpl? 1 : 0
+  type              = "ingress"
+  description       =  "Allow incoming from known machines"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.yb-db-nodes.id
+  prefix_list_ids   = aws_ec2_managed_prefix_list.allow-remote.*.id
+}
 
 resource "aws_security_group" "allow-egress" {
   name        = "${var.project_config.prefix}-allow-egress"
@@ -267,41 +281,27 @@ resource "aws_security_group" "allow-egress" {
     Name = "${var.project_config.prefix}-allow-egress"
   }
 }
+
 resource "aws_security_group" "allow-remote" {
-  count = local.create_mpl? 1 : 0
   name        = "${var.project_config.prefix}-allow-remote"
   description = "Allow Remote IPs"
   vpc_id      = aws_vpc.vpc.id
 
-  ingress {
-    description =  "Allow all"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
-  }
   tags = {
     Name = "${var.project_config.prefix}-allow-remote"
   }
 }
 
-
-resource "aws_ec2_managed_prefix_list" "allow-remote" {
-  count = local.create_mpl? 1 : 0
-  name           = "${var.project_config.prefix}-allow-remote"
-  address_family = "IPv4"
-  max_entries    = 20
-  tags = {
-    Name = "${var.project_config.prefix}-allow-remote"
-  }
+resource "aws_security_group_rule" "allow-remote-allow-mpl" {
+  count             = local.create_mpl? 1 : 0
+  type              = "ingress"
+  description       =  "Allow all"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
+  security_group_id = aws_security_group.allow-remote.id
 }
-resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
-  for_each = local.create_mpl? var.project_config.remote-ips : {}
-  cidr           = "${each.value}"
-  description    = "${each.key}"
-  prefix_list_id = one(aws_ec2_managed_prefix_list.allow-remote.*.id)
-}
-
 
 resource "aws_default_security_group" "default"{
   vpc_id      = aws_vpc.vpc.id
@@ -320,6 +320,7 @@ resource "aws_security_group_rule" "default-internal-ingress"{
 }
 
 resource "aws_security_group_rule" "default-remote-ingress"{
+  count = local.create_mpl? 1 : 0
   type             = "ingress"
   from_port        = 0
   to_port          = 0
