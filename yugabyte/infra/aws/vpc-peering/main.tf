@@ -1,24 +1,10 @@
-data "aws_vpc" "src" {
-  id       = var.src_vpc_id
-  provider = aws.src
-}
-data "aws_region" "src" {
-  provider = aws.src
-}
-data "aws_vpc" "dest" {
-  id       = var.dest_vpc_id
-  provider = aws.dest
-}
-data "aws_region" "dest" {
-  provider = aws.dest
-}
 
 
 # Requester's side of the connection.
 resource "aws_vpc_peering_connection" "peer" {
-  vpc_id      = data.aws_vpc.src.id
-  peer_vpc_id = data.aws_vpc.dest.id
-  peer_region = data.aws_region.dest.name
+  vpc_id      = var.src_vpc_id
+  peer_vpc_id = var.dest_vpc_id
+  peer_region = var.dest_region
   provider = aws.src
 
 }
@@ -45,25 +31,11 @@ resource "aws_vpc_peering_connection_options" "dest-option" {
   }
 }
 
-
-data "aws_route_tables" "dest" {
-  vpc_id   = var.dest_vpc_id
-  provider = aws.dest
-}
-data "aws_route_tables" "src" {
-  vpc_id   = var.src_vpc_id
-  provider = aws.src
-}
-
-
 locals {
-  src_cidrs  = concat([data.aws_vpc.src.cidr_block], data.aws_vpc.src.cidr_block_associations.*.cidr_block)
-  dest_cidrs = concat([data.aws_vpc.dest.cidr_block], data.aws_vpc.dest.cidr_block_associations.*.cidr_block)
-}
-
-locals {
-  src_rtbl_ids  = concat(data.aws_route_tables.src.ids, [data.aws_vpc.src.main_route_table_id])
-  dest_rtbl_ids = concat(data.aws_route_tables.dest.ids,[data.aws_vpc.dest.main_route_table_id])
+  src_cidrs = var.src_cidrs
+  dest_cidrs = var.dest_cidrs
+  src_rtbl_ids = var.src_route_tables
+  dest_rtbl_ids = var.dest_route_tables
 
   src_routes = distinct(
     flatten(
