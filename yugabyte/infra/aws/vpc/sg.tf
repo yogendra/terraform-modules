@@ -1,138 +1,135 @@
-resource "aws_security_group" "allow-ingress"{
-  name        = "${var.project_config.prefix}-allow-ingress"
-  description = "Allow Public Ingress Traffic"
+resource "aws_security_group" "app"{
+  name        = "${var.project_config.prefix}-app"
+  description = "SG for applications nodes"
   vpc_id      = aws_vpc.vpc.id
-  ingress {
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
   tags = {
-    Name = "${var.project_config.prefix}-allow-ingress"
+    Name = "${var.project_config.prefix}-app"
+  }
+  lifecycle {
+    prevent_destroy = true
   }
 }
 resource "aws_security_group_rule" "allow-ingress-80" {
+  description      = "Allow HTTPS"
+  from_port        = 443
+  to_port          = 443
+  protocol         = "tcp"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type              = "ingress"
+  security_group_id = aws_security_group.app.id
+}
+resource "aws_security_group_rule" "app-80" {
   description      = "Allow HTTP"
   from_port        = 80
   to_port          = 80
   protocol         = "tcp"
   cidr_blocks      = ["0.0.0.0/0"]
   type              = "ingress"
-  security_group_id = aws_security_group.allow-ingress.id
+  security_group_id = aws_security_group.app.id
 }
-resource "aws_security_group_rule" "allow-ingress-8080" {
+resource "aws_security_group_rule" "app-8080" {
   description      = "Allow Alt HTTP"
   from_port        = 8080
   to_port          = 8080
   protocol         = "tcp"
   cidr_blocks      = ["0.0.0.0/0"]
   type              = "ingress"
-  security_group_id = aws_security_group.allow-ingress.id
+  security_group_id = aws_security_group.app.id
 }
-resource "aws_security_group_rule" "allow-ingress-8443" {
+resource "aws_security_group_rule" "app-8443" {
   description      = "Allow Alt HTTPS"
   from_port        = 8443
   to_port          = 8443
   protocol         = "tcp"
   cidr_blocks      = ["0.0.0.0/0"]
   type              = "ingress"
-  security_group_id = aws_security_group.allow-ingress.id
+  security_group_id = aws_security_group.app.id
 }
-resource "aws_security_group_rule" "allow-ingress-3000" {
+resource "aws_security_group_rule" "app-3000" {
   description      = "Allow React HTTP"
   from_port        = 3000
   to_port          = 3000
   protocol         = "tcp"
   cidr_blocks      = ["0.0.0.0/0"]
   type              = "ingress"
-  security_group_id = aws_security_group.allow-ingress.id
+  security_group_id = aws_security_group.app.id
 }
 
-resource "aws_security_group" "allow-internal"{
-  name        = "${var.project_config.prefix}-allow-internal"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = aws_vpc.vpc.id
-  ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
-  }
-  egress {
-    description      = "Allow all Internal"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
-  }
-  tags = {
-    Name = "${var.project_config.prefix}-allow-internal"
-  }
-}
 
 resource "aws_security_group" "yba-node" {
   name        = "${var.project_config.prefix}-yba-nodes"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = local.project_cidrs
-  }
   tags = {
     Name = "${var.project_config.prefix}-yba-node"
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
+resource "aws_security_group_rule" "yba-node-egress" {
+  description      = "HTTP from VPC"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type             = "egress"
+  security_group_id = aws_security_group.yba-node.id
+}
+
+resource "aws_security_group_rule" "yba-node-22" {
+  description      = "SSH"
+  from_port        = 22
+  to_port          = 22
+  protocol         = "tcp"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type             = "ingress"
+  security_group_id = aws_security_group.yba-node.id
+}
 resource "aws_security_group_rule" "yba-node-80" {
   description      = "HTTP from VPC"
   from_port        = 80
   to_port          = 80
   protocol         = "tcp"
-  cidr_blocks      = local.project_cidrs
+  cidr_blocks      = ["0.0.0.0/0"]
   type             = "ingress"
   security_group_id = aws_security_group.yba-node.id
 }
+resource "aws_security_group_rule" "yba-node-443" {
+  description      = "HTTPS from VPC"
+  from_port        = 443
+  to_port          = 443
+  protocol         = "tcp"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type             = "ingress"
+  security_group_id = aws_security_group.yba-node.id
+}
+
 
 resource "aws_security_group_rule" "yba-node-8800" {
   description      = "Replicated"
   from_port        = 8800
   to_port          = 8800
   protocol         = "tcp"
-  cidr_blocks      = local.project_cidrs
+  cidr_blocks      = ["0.0.0.0/0"]
   type             = "ingress"
   security_group_id = aws_security_group.yba-node.id
 }
-resource "aws_security_group_rule" "yba-node-22" {
-  description      = "SSH"
-  from_port        = 22
-  to_port          = 22
-  protocol         = "tcp"
-  cidr_blocks      = local.project_cidrs
-  type             = "ingress"
-  security_group_id = aws_security_group.yba-node.id
-}
+
 resource "aws_security_group_rule" "yba-node-54422" {
   description      = "SSH Alt"
   from_port        = 54422
   to_port          = 54422
   protocol         = "tcp"
-  cidr_blocks      = local.project_cidrs
+  cidr_blocks      = ["0.0.0.0/0"]
   type             = "ingress"
   security_group_id = aws_security_group.yba-node.id
 }
 resource "aws_security_group_rule" "yba-node-allow-mpl" {
   count             = local.create_mpl? 1 : 0
   type              = "ingress"
-  description       =  "Allow incoming from known machines"
+  description       = "Allow incoming from known machines"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
@@ -142,28 +139,34 @@ resource "aws_security_group_rule" "yba-node-allow-mpl" {
 
 
 resource "aws_security_group" "yb-db-nodes" {
-  name        = "${var.project_config.prefix}-yb-db-nodes"
+  name        = "${var.project_config.prefix}-ybdb"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
-  ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = local.project_cidrs
-  }
   tags = {
     Name = "${var.project_config.prefix}-yba-db-node"
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
-# resource "aws_security_group_rule" "yb-db-nodes-egress-public"{
-#   description =  "Allow egress to all destinations"
-#   from_port        = 0
-#   to_port          = 0
-#   protocol         = "-1"
-#   cidr_blocks      = ["0.0.0.0/0"]
-#   type             = "egress"
-#   security_group_id = aws_security_group.yb-db-nodes.id
-# }
+resource "aws_security_group_rule" "yb-db-nodes-egress-public"{
+  description =  "Allow egress to all destinations"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type             = "egress"
+  security_group_id = aws_security_group.yb-db-nodes.id
+}
+resource "aws_security_group_rule" "yb-db-nodes-22" {
+  description      = "Allow SSH"
+  from_port        = 22
+  to_port          = 22
+  protocol         = "tcp"
+  cidr_blocks      = local.project_cidrs
+  type             = "ingress"
+  security_group_id = aws_security_group.yb-db-nodes.id
+}
 resource "aws_security_group_rule" "yb-db-nodes-7000" {
   description      = "Allow Master RPC"
   from_port        = 7000
@@ -292,51 +295,24 @@ resource "aws_security_group_rule" "yb-db-nodes-allow-mpl" {
   prefix_list_ids   = aws_ec2_managed_prefix_list.allow-remote.*.id
 }
 
-resource "aws_security_group" "allow-egress" {
-  name        = "${var.project_config.prefix}-allow-egress"
-  description = "Allow Egress"
-  vpc_id      = aws_vpc.vpc.id
 
-  egress {
-    description =  "Allow all"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "${var.project_config.prefix}-allow-egress"
-  }
-}
-
-resource "aws_security_group" "allow-remote" {
-  name        = "${var.project_config.prefix}-allow-remote"
-  description = "Allow Remote IPs"
-  vpc_id      = aws_vpc.vpc.id
-  ingress {
-    description       =  "Allow all"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
-  }
-  tags = {
-    Name = "${var.project_config.prefix}-allow-remote"
-  }
-}
-
-
-resource "aws_default_security_group" "default"{
-  vpc_id      = aws_vpc.vpc.id
-  ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = local.project_cidrs
-  }
-  tags = {
-    Name = "${var.project_config.prefix}-default"
-  }
+# resource "aws_default_security_group" "default"{
+#   vpc_id      = aws_vpc.vpc.id
+#   tags = {
+#     Name = "${var.project_config.prefix}-default"
+#   }
+#   lifecycle {
+#     prevent_destroy = true
+#   }
+# }
+resource "aws_security_group_rule" "default-internal-ingress"{
+  count = local.create_mpl? 1 : 0
+  type             = "ingress"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = local.project_cidrs
+  security_group_id = aws_vpc.vpc.default_security_group_id
 }
 
 resource "aws_security_group_rule" "default-remote-ingress"{
@@ -346,7 +322,7 @@ resource "aws_security_group_rule" "default-remote-ingress"{
   to_port          = 0
   protocol         = "-1"
   prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
-  security_group_id = aws_default_security_group.default.id
+  security_group_id = aws_vpc.vpc.default_security_group_id
 }
 
 resource "aws_security_group_rule" "default-egress"{
@@ -355,6 +331,8 @@ resource "aws_security_group_rule" "default-egress"{
   to_port          = 0
   protocol         = "-1"
   cidr_blocks      = ["0.0.0.0/0"]
-  security_group_id = aws_default_security_group.default.id
+  security_group_id = aws_vpc.vpc.default_security_group_id
 }
+
+
 
