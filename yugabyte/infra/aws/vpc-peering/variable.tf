@@ -1,4 +1,3 @@
-
 variable "src_vpc_id" {
   type = string
   description = "Source VPC ID to peer"
