@@ -5,7 +5,9 @@ output "region" {
 output "vpc_id"{
   value = aws_vpc.vpc.id
 }
-
+output "vpc_cidrs"{
+  value = var.config.cidrs
+}
 output "sg-app" {
   value = aws_security_group.app.id
 }
