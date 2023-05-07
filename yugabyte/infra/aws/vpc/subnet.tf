@@ -8,6 +8,8 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = "${var.project_config.prefix}-pub-${local.public_subnets[count.index].az}"
+    yb_aws_service = "vpc"
+    yb_resource_type = "subnet"
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -18,6 +20,8 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "${var.project_config.prefix}-pub"
+    yb_aws_service = "vpc"
+    yb_resource_type = "route_table"
   }
 }
 
@@ -38,6 +42,8 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = "${var.project_config.prefix}-pvt-${local.private_subnets[count.index].az}"
+    yb_aws_service = "vpc"
+    yb_resource_type = "subnet"
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -49,6 +55,8 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "${var.project_config.prefix}-pvt"
+    yb_aws_service = "vpc"
+    yb_resource_type = "route_table"
   }
 }
 
@@ -62,5 +70,7 @@ resource "aws_default_route_table" "default" {
   default_route_table_id = aws_vpc.vpc.default_route_table_id
    tags = {
     Name = "${var.project_config.prefix}-default"
+    yb_aws_service = "vpc"
+    yb_resource_type = "route_table"
   }
 }
