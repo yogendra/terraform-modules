@@ -28,4 +28,9 @@ locals {
   mpl_unsupported_regions = [ "ap-south-2", "ap-southeast-4", "eu-central-2", "eu-south-2", "me-central-1"]
 
   create_mpl = !contains(local.mpl_unsupported_regions, local.region )
+  nat-instance-types-override = {
+    default = ["t3.nano","t3a.nano"]
+    ap-southeast-3 = ["t3.nano"]
+    ap-south-2 = ["t3.nano"]
+  }
 }
