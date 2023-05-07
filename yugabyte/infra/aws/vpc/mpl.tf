@@ -6,6 +6,8 @@ resource "aws_ec2_managed_prefix_list" "allow-remote" {
   max_entries    = 20
   tags = {
     Name = "${var.project_config.prefix}-allow-remote"
+    yb_aws_service = "ec2"
+    yb_resource_type = "mpl"
   }
 }
 resource "aws_ec2_managed_prefix_list_entry" "allow-remote" {
