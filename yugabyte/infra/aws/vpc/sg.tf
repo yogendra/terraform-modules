@@ -4,6 +4,8 @@ resource "aws_security_group" "app"{
   vpc_id      = aws_vpc.vpc.id
   tags = {
     Name = "${var.project_config.prefix}-app"
+    yb_aws_service = "ec2"
+    yb_resource_type = "security_group"
   }
   lifecycle {
     prevent_destroy = true
@@ -144,6 +146,8 @@ resource "aws_security_group" "yb-db-nodes" {
   vpc_id      = aws_vpc.vpc.id
   tags = {
     Name = "${var.project_config.prefix}-yba-db-node"
+    yb_aws_service = "ec2"
+    yb_resource_type = "security_group"
   }
   lifecycle {
     prevent_destroy = true
@@ -295,16 +299,6 @@ resource "aws_security_group_rule" "yb-db-nodes-allow-mpl" {
   prefix_list_ids   = aws_ec2_managed_prefix_list.allow-remote.*.id
 }
 
-
-# resource "aws_default_security_group" "default"{
-#   vpc_id      = aws_vpc.vpc.id
-#   tags = {
-#     Name = "${var.project_config.prefix}-default"
-#   }
-#   lifecycle {
-#     prevent_destroy = true
-#   }
-# }
 resource "aws_security_group_rule" "default-internal-ingress"{
   count = local.create_mpl? 1 : 0
   type             = "ingress"
