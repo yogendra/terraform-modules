@@ -7,6 +7,8 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids   = [aws_route_table.private.id,aws_route_table.private.id, aws_vpc.vpc.default_route_table_id]
   tags = {
     Name = "${var.project_config.prefix}-s3"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "s3"
   }
 }
 
@@ -24,6 +26,8 @@ resource "aws_security_group" "allow-vpc-internal" {
   }
   tags = {
     Name = "${var.project_config.prefix}-vpc-internal"
+    yb_aws_service = "ec2"
+    yb_resource_type = "security_group"
   }
 }
 
@@ -37,6 +41,8 @@ resource "aws_vpc_endpoint" "ssm" {
   private_dns_enabled = true
   tags = {
     Name = "${var.project_config.prefix}-ssm"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "ssm"
   }
 }
 
@@ -50,6 +56,8 @@ resource "aws_vpc_endpoint" "ec2messages" {
   tags = {
 
     Name = "${var.project_config.prefix}-ec2messages"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "ec2messages"
   }
 }
 resource "aws_vpc_endpoint" "ssmmessages" {
@@ -61,6 +69,8 @@ resource "aws_vpc_endpoint" "ssmmessages" {
   private_dns_enabled = true
   tags = {
     Name = "${var.project_config.prefix}-ssmmessages"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "ssmmessages"
   }
 }
 
@@ -74,6 +84,8 @@ resource "aws_vpc_endpoint" "ec2" {
   private_dns_enabled = true
   tags = {
     Name = "${var.project_config.prefix}-ec2"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "ec2"
   }
 }
 
@@ -87,6 +99,8 @@ resource "aws_vpc_endpoint" "kms" {
   private_dns_enabled = true
   tags = {
     Name = "${var.project_config.prefix}-kms"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "kms"
   }
 }
 
@@ -100,5 +114,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   private_dns_enabled = true
   tags = {
     Name = "${var.project_config.prefix}-cloudwatch"
+    yb_aws_service = "vpc_endpoint"
+    yb_resource_type = "cloudwatch"
   }
 }
