@@ -8,14 +8,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_eip" "nat"{
-  count = local.create_nat_gw ? 1 : 0
-  tags = {
-    Name = "${var.project_config.prefix}-nat"
-    yb_aws_service = "ec2"
-    yb_resource_type = "eip"
-  }
-}
 
 module "nat" {
   count = local.create_nat_gw ? 1 : 0
@@ -37,9 +29,31 @@ module "nat" {
 }
 
 
+resource "aws_eip" "nat"{
+  count = local.create_nat_gw ? 1 : 0
+  network_interface = one(module.nat).eni_id
+
+  tags = {
+    Name = "${var.project_config.prefix}-nat"
+    yb_aws_service = "ec2"
+    yb_resource_type = "eip"
+  }
+}
+
+
 resource "aws_route" "public-egress" {
   count = local.create_igw ? 1 : 0
   route_table_id = aws_route_table.public.id
   destination_cidr_block    = "0.0.0.0/0"
   gateway_id = aws_internet_gateway.igw[0].id
+}
+
+
+resource "aws_security_group_rule" "nat-egress"{
+  type             = "egress"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  security_group_id = one(module.nat[*].sg_id)
 }
