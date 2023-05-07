@@ -7,6 +7,8 @@ resource "aws_vpc" "vpc" {
 
   tags = {
     Name = "${var.project_config.prefix}-${local.region}"
+    yb_aws_service = "vpc"
+    yb_resource_type = "vpc"
   }
 }
 resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
