@@ -1,7 +1,7 @@
 output "yba-instance-profile" {
-  value = aws_iam_instance_profile.yba.name
+  value = aws_iam_instance_profile.yba.arn
 }
 
 output "ssm-instance-profile" {
-  value = aws_iam_instance_profile.ssm.name
+  value = aws_iam_instance_profile.ssm.arn
 }
