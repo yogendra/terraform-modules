@@ -63,6 +63,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
   }
 }
 resource "aws_vpc_endpoint" "ssmmessages" {
+  count             = local.create_endpoints?1:0
   vpc_id              = aws_vpc.vpc.id
   service_name        = "com.amazonaws.${local.region}.ssmmessages"
   vpc_endpoint_type   = "Interface"
