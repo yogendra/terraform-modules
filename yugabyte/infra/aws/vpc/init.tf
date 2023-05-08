@@ -20,8 +20,8 @@ locals {
   private_cidrs  = local.private_subnets.*.cidr
   project_cidrs = [var.project_config.cidr]
   region = data.aws_region.current.name
-  create_endpoints = var.config.air-gapped
   create_igw =   !var.config.air-gapped
+  create_endpoints = var.config.air-gapped && !var.config.use-nat
   create_nat_gw = (!var.config.air-gapped) && var.config.use-nat
 
   // Some regions don't support managed prefix list. meh!
