@@ -171,6 +171,15 @@ resource "aws_security_group_rule" "yb-db-nodes-22" {
   type             = "ingress"
   security_group_id = aws_security_group.yb-db-nodes.id
 }
+resource "aws_security_group_rule" "yb-db-nodes-allow-yba" {
+  description      = "Allow All from YBA Node"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  source_security_group_id = aws_security_group.yba-node.id
+  type             = "ingress"
+  security_group_id = aws_security_group.yb-db-nodes.id
+}
 resource "aws_security_group_rule" "yb-db-nodes-7000" {
   description      = "Allow Master RPC"
   from_port        = 7000
