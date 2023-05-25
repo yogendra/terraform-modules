@@ -1,0 +1,67 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+
+resize_rootfs: true
+
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups: users
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+  - ${public-key}
+
+disk_setup:
+  /dev/nvme1n1:
+    table_type: 'gpt'
+    layout: true
+    overwrite: false
+  /dev/nvme2n1:
+    table_type: 'gpt'
+    layout: true
+    overwrite: false
+  /dev/nvme3n1:
+    table_type: 'gpt'
+    layout: true
+    overwrite: false
+write_files:
+- path: /opt/yba-ctl/yba.lic
+  defer: true
+  owner: yugabyte:yugabyte
+  permissions: '0600'
+  content: !!binary |
+    ${license}
+fs_setup:
+- label: YB_HOME
+  filesystem: 'xfs'
+  device: '/dev/nvme1n1'
+  partition: 'auto'
+  overwrite: false
+- label: YB_OPT
+  filesystem: 'xfs'
+  device: '/dev/nvme2n1'
+  partition: 'auto'
+  overwrite: false
+packages:
+- jq
+- net-tools
+mounts:
+  - [LABEL=YB_HOME, /home/yugabyte, auto, "defaults,discard", "0", "0"]
+  - [LABEL=YB_OPT, /opt, auto, "defaults,discard", "0", "0"]
+
+runcmd:
+- ["mkdir", "/opt/yugabyte"]
+- ["wget", "-q", "${yba-installer-url}", "-O", "/opt/${yba-installer-package-filename}"]
+- ["tar", "-C", "/opt", "-xf", "/opt/${yba-installer-package-filename}"]
+- ["rm", "-f", "/opt/${yba-installer-package-filename}"]
+- ["/opt/${yba-installer-dirname}/yba-ctl", "preflight", "--force"]
+- ["/opt/${yba-installer-dirname}/yba-ctl", "install"]
+- ["chown", "-R", "yugabyte:yugabyte", "/home/yugabyte", "/opt/yugabyte", "/opt/yba-ctl", "/opt/${yba-installer-dirname}"]
+- ["curl", "-X", "POST", "-sSkL", "https://localhost/api/v1/register?generateApiToken=true", "-d", "{\"code\": \"${yba-environment-type}\", \"name\": \"${yba-user-name}\", \"email\": \"${yba-user-email}\", \"password\": \"${yba-user-password}\", \"confirmPassword\":\"${yba-user-password}\", \"confirmEULA\": true }", "-H", "content-type:application/json"]
+
+power_state:
+    mode: reboot
+    timeout: 30
