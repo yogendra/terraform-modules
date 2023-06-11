@@ -1,0 +1,51 @@
+installRoot: "/opt/yugabyte"
+host: "${yba_fqdn}"
+server_cert_path: "/opt/yugabyte/data/yba-installer/certs/server-cert.pem"
+server_key_path: "/opt/yugabyte/data/yba-installer/certs/server-key.pem"
+service_username: "yugabyte"
+platform:
+    port: 443
+    useOauth: false
+    ybSecurityType: ""
+    ybOidcClientId: ""
+    ybOidcSecret: ""
+    ybOidcDiscoveryUri: ""
+    ywUrl: ""
+    ybOidcScope: ""
+    ybOidcEmailAttr: ""
+    keyStorePassword: "Y2TJixBJG3KMmeEljv_Rj7NUc-JTzIGkSdNEeSSzqC4="
+    appSecret: "LUmP42ciiQjiCGZeLSHBcCAkX5juYXtxypSYBpAcOYuvBMFos1C5i8RozcUb6xAxZCNpgjAfICldM2rqJO8OGA=="
+    restartSeconds: 10
+    proxy:
+        enable: false
+        http_proxy: ""
+        java_http_proxy_port: 80
+        java_http_proxy_host: ""
+        https_proxy: ""
+        java_https_proxy_port: 443
+        java_https_proxy_host: ""
+        no_proxy: ""
+        java_non_proxy: ""
+    additional: ""
+postgres:
+    install:
+        enabled: true # yba-ctl will set up its own postgres
+        port: 5432
+        restartSeconds: 10 # restart interval on exit
+        locale: en_US.UTF-8 # Locale for initdb
+    useExisting:
+        enabled: false # enable to use an existing postgres install
+        username: ""
+        password: ""
+        host: ""
+        port: 5432
+        pg_dump_path: ""
+        pg_restore_path: ""
+prometheus:
+    port: 9090
+    restartSeconds: 10
+    scrapeInterval: 15
+    scrapeTimeout: 10
+    maxConcurrency: 20
+    maxSamples: 5000000
+    timeout: 30

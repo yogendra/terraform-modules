@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+export YBA_RELEASE="${yba_release}"
+export YBA_VERSION="$${YBA_RELEASE%-*}"
+export YBA_ENV_TYPE="${yba_env}"
+export YBA_USERNAME="${yba_username}"
+export YBA_LOGIN="${yba_login}"
+export YBA_PASSWORD="${yba_password}"
+export YBA_HOSTNAME="${yba_fqdn}"
+export YBA_PORTAL="https://$YBA_HOSTNAME"
+export YBA_API="$YBA_PORTAL/api/v1"
+export GCP_SA_CREDENTIAL_KEY="${gcp_sa_key}"
+export GCP_NETWORK="${gcp_network}"
+export GCP_SUBNET="${gcp_subnet}"
+export GCP_BACKUP_BUCKET="${gcp_backup_bucket}"
+export GCP_KEYRING_ID="${gcp_keyring_id}"
+export GCP_CRYPTOKEY_ID="${gcp_cryptokey_id}"

@@ -1,0 +1,33 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+resize_rootfs: true
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups: users
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+
+packages:
+- jq
+- net-tools
+bootcmd:
+- gsutil cp -R ${asset-bucket-location}/* ${asset-local-dir}
+- cp -R ${asset-local-dir}/yba-ctl/* /opt/yba-ctl/
+- cp -R ${asset-local-dir}/certs/* /opt/yugabyte/data/yba-installer/certs/
+- chmod a+x ${asset-local-dir}/scripts/*.sh
+- chown -R yugabyte:yugabyte ${asset-local-dir} /opt/yba-ctl /op/yba-installer /opt/yugabyte
+runcmd:
+- echo 127.0.0.1 ${yba_fqdn} >> /etc/hosts
+- mkdir -p ${asset-local-dir} /opt/yba-ctl /op/yba-installer /opt/yugabyte/data/yba-installer/certs
+- gsutil cp -R ${asset-bucket-location}/* ${asset-local-dir}
+- cp -R ${asset-local-dir}/yba-ctl/* /opt/yba-ctl/
+- cp -R ${asset-local-dir}/certs/* /opt/yugabyte/data/yba-installer/certs/
+- chmod a+x ${asset-local-dir}/scripts/*.sh
+- chown -R yugabyte:yugabyte ${asset-local-dir} /opt/yugabyte/ /opt/yba-ctl /op/yba-installer
+- ${asset-local-dir}/scripts/01-install-yba.sh
+- ${asset-local-dir}/scripts/02-configure-provider.sh
+- ${asset-local-dir}/scripts/03-configure-backup.sh
+- ${asset-local-dir}/scripts/04-configure-kms.sh
