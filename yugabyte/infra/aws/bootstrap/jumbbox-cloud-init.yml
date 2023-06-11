@@ -1,0 +1,34 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups: users
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  local_passwd: true
+  ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNFVe3z8zrNMJLyRXRMOGDuyJryW8kzbR9vsZ3QlPMrJmjEQvqL3c21VJAbJG/0BwpQbUsR/YNdww61w+7+bRiXCCI70jsBEt0KZqSYNmSNmiRjJdQwP+g7Kiav8E/Kb01pSVyDD3CfNYBzMPksxwn0F/9dHlD8d1JMjbxQ8Pc1jYt3ShFWLcvLAxfFXfAPFXnwo++b9JAjtzlDh7ykc5RbErQZmh2ZUS7FRbN8J/CoksH0fJOyLYrn4+CDtJlI5EgSEnSDbbF4L4vJVfCL20+1Q3r0Bfez5BcLj+I69goB/Ij8iHh3X3KfihjWppWw42Vs6w7SbEjmkn50/D/fPzHmv8Cdy4vFQLPWr4ybREmyvnY0NeIJJ0BYlb48JkI6wPlHPz46QrnFUh6gWRIzzdf611jlz4LOLMlZWeIiwXCXL0ejKbNKtQuS6xX5RTjrlTXxgmS1O4LYAM/NmX80PNL2cuaHoG8PLlAHGQthYcUIhfW3M3WUwHYi+VsJsXRZhU= yba-apj-demo-shr
+
+
+mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
+
+mounts:
+- [ "LABEL=home", /home/yugabyte, "auto", "defaults,nofail", "0", "0" ]
+
+disk_setup:
+  /dev/sdf:
+    table_type: 'mbr'
+    layout: 'auto'
+    overwrite: False
+fs_setup:
+- label: home
+  filesystem: 'xfs'
+  device: '/dev/sdf'
+  overwrite: false
+
+packages:
+- wget
+- curl
+- jq
