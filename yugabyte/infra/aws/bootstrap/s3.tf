@@ -6,6 +6,12 @@ resource "aws_s3_bucket" "iac" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "iac_versioning" {
+  bucket = aws_s3_bucket.iac.bucket
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 locals {
   ignore_files = [
     ".DS_Store",
