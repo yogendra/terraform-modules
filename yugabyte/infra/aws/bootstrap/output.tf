@@ -1,5 +1,5 @@
 output "iac-bucket" {
-  value = aws_s3_bucket.iac-assets.bucket
+  value = aws_s3_bucket.iac.bucket
 }
 
 output "iac-state-prefix" {
