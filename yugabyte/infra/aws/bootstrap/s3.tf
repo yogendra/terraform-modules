@@ -7,8 +7,16 @@ resource "aws_s3_bucket" "iac" {
 }
 
 locals {
+  ignore_files = [
+    ".DS_Store",
+    ".gitignore",
+    ".gitkeep"
+  ]
   asset_source = "${path.root}/private"
-  assets = fileset(local.asset_source,"**")
+  assets = toset([
+    for i in fileset(local.asset_source,"**") :
+      i if !contains(local.ignore_files, basename(i))
+  ])
   mime_types = {
     ".html" = "text/html"
     ".json" = "application/json"
