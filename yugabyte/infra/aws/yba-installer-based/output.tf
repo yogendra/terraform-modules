@@ -5,6 +5,13 @@ output "instance-id" {
 output "yba"{
  value = aws_instance.yba
 }
+output "public-ip"{
+ value = aws_instance.yba.public_ip
+}
+
+output "private-ip"{
+ value = aws_instance.yba.private_ip
+}
 
 output "helper-commands" {
   value = <<COMMAND
