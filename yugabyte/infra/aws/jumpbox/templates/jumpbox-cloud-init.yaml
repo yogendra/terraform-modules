@@ -97,7 +97,7 @@ bootcmd:
 - aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
 runcmd:
 - mkdir /root/certs
-- openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem
+- openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
 - git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 - aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
 - curl -fsSL https://code-server.dev/install.sh | HOME=/root bash
