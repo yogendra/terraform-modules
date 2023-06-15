@@ -69,6 +69,12 @@ write_files:
     password: ${password}
     cert: /root/certs/server-cert.pem
     cert-key: /root/certs/server-key.pem
+    app-name: YugabyteDB Demo
+    welcome-test: |
+      Welcome to YugabyteDB Demo Environment.
+      Test
+      Test
+      Test
 - path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
   content: |
     net.ipv4.conf.all.forwarding=1
@@ -102,6 +108,12 @@ runcmd:
 - aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
 - curl -fsSL https://code-server.dev/install.sh | HOME=/root bash
 - systemctl enable --now code-server@root
+- code-server --install-extension ms-toolsai.vscode-jupyter-slideshow
+- code-server --install-extension ms-toolsai.jupyter
+- code-server --install-extension mtxr.sqltools
+- code-server --install-extension mtxr.sqltools-driver-pg
+- code-server --install-extension ms-azuretools.vscode-docker
+- code-server --install-extension ms-python.python
 - curl -sSL https://downloads.yugabyte.com/releases/2.18.0.1/yugabyte-2.18.0.1-b4-linux-x86_64.tar.gz -o /root/yugabyte.tgz
 - mkdir -p /root/yugabyte mkdir /root/bin
 - tar -C /root/yugabyte -xzf /root/yugabyte.tgz --strip-components=1
