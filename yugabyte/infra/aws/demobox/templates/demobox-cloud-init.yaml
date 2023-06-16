@@ -70,7 +70,7 @@ write_files:
     cert: /root/certs/server-cert.pem
     cert-key: /root/certs/server-key.pem
     app-name: YugabyteDB Demo
-    welcome-test: |
+    welcome-text: |
       Welcome to YugabyteDB Demo Environment.
       Test
       Test
