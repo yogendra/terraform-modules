@@ -20,7 +20,7 @@ users:
   shell: /bin/bash
   lock_passwd: true
   ssh_authorized_keys:
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNFVe3z8zrNMJLyRXRMOGDuyJryW8kzbR9vsZ3QlPMrJmjEQvqL3c21VJAbJG/0BwpQbUsR/YNdww61w+7+bRiXCCI70jsBEt0KZqSYNmSNmiRjJdQwP+g7Kiav8E/Kb01pSVyDD3CfNYBzMPksxwn0F/9dHlD8d1JMjbxQ8Pc1jYt3ShFWLcvLAxfFXfAPFXnwo++b9JAjtzlDh7ykc5RbErQZmh2ZUS7FRbN8J/CoksH0fJOyLYrn4+CDtJlI5EgSEnSDbbF4L4vJVfCL20+1Q3r0Bfez5BcLj+I69goB/Ij8iHh3X3KfihjWppWw42Vs6w7SbEjmkn50/D/fPzHmv8Cdy4vFQLPWr4ybREmyvnY0NeIJJ0BYlb48JkI6wPlHPz46QrnFUh6gWRIzzdf611jlz4LOLMlZWeIiwXCXL0ejKbNKtQuS6xX5RTjrlTXxgmS1O4LYAM/NmX80PNL2cuaHoG8PLlAHGQthYcUIhfW3M3WUwHYi+VsJsXRZhU= yba-apj-demo-shr
+  - ${public-key}
 system_info:
   default_user:
     groups: [docker]
@@ -104,6 +104,7 @@ bootcmd:
 runcmd:
 - mkdir /root/certs
 - openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
+- openssl pkcs12 -export -in /root/certs/server-cert.pem -inkey /root/certs/server-key.pem -out /root/certs/server-cert.p12 -password pass:changeit -name server-key
 - git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 - aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
 - curl -fsSL https://code-server.dev/install.sh | HOME=/root bash
@@ -114,22 +115,21 @@ runcmd:
 - code-server --install-extension mtxr.sqltools-driver-pg
 - code-server --install-extension ms-azuretools.vscode-docker
 - code-server --install-extension ms-python.python
+- curl -sSL https://github.com/YugabyteDB-Samples/yb-workload-simulator/releases/download/v0.0.6/yb-workload-sim-0.0.6.jar -o /root/yb-workload-sim-0.0.6.jar
+- curl -sSL https://github.com/yugabyte/yb-sample-apps/releases/download/v1.4.1/yb-sample-apps.jar -o /root/yb-sample-apps.jar
 - curl -sSL https://downloads.yugabyte.com/releases/2.18.0.1/yugabyte-2.18.0.1-b4-linux-x86_64.tar.gz -o /root/yugabyte.tgz
 - mkdir -p /root/yugabyte mkdir /root/bin
 - tar -C /root/yugabyte -xzf /root/yugabyte.tgz --strip-components=1
 - cd /root/yugabyte
 - ./bin/post_install.sh
+- echo "export PATH=\$PATH:/root/bin:/root/yugabyte/bin:/root/yugabyte/tools:/root/yugabyte/posgres/bin" >> /root/.bashrc
 - curl -sSL https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/bin/yb-docker-ctl -o /root/bin/yb-docker-ctl && chmod +x /root/bin/yb-docker-ctl
 - curl -sSL https://s3.us-west-2.amazonaws.com/downloads.yugabyte.com/repos/reporpms/yb-apt-repo_1.0.0_all.deb -o yb-apt-repo.deb
 - apt-get install -qqy ./yb-apt-repo.deb
 - apt-get update
 - apt-get install -qqy yb-voyager
 - rm yb-apt-repo.deb
-- echo "export PATH=\$PATH:/root/bin:/root/yugabyte/bin:/root/yugabyte/tools:/root/yugabyte/posgres/bin" >> /root/.bashrc
-- echo "export PATH=\$PATH:/root/bin:/root/yugabyte/bin:/root/yugabyte/tools:/root/yugabyte/posgres/bin" >> /root/.bashrc
 - curl -sS https://starship.rs/install.sh | sh -s -- -f
 - echo "eval \"\$(starship init bash)\"" >> /root/.bashrc
 - echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >> /root/.bashrc
-- curl -sSL https://github.com/YugabyteDB-Samples/yb-workload-simulator/releases/download/v0.0.6/yb-workload-sim-0.0.6.jar -o /root/yb-workload-sim-0.0.6.jar
-- curl -sSL https://github.com/yugabyte/yb-sample-apps/releases/download/v1.4.1/yb-sample-apps.jar -o /root/yb-sample-apps.jar
 - netplan apply
