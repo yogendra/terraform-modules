@@ -7,9 +7,6 @@ resource "aws_security_group" "app"{
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
   }
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 resource "aws_security_group_rule" "allow-ingress-80" {
   description      = "Allow HTTPS"
@@ -64,9 +61,6 @@ resource "aws_security_group" "yba-node" {
   vpc_id      = aws_vpc.vpc.id
   tags = {
     Name = "${var.project_config.prefix}-yba-node"
-  }
-  lifecycle {
-    prevent_destroy = true
   }
 }
 
@@ -148,9 +142,6 @@ resource "aws_security_group" "yb-db-nodes" {
     Name = "${var.project_config.prefix}-yba-db-node"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
-  }
-  lifecycle {
-    prevent_destroy = true
   }
 }
 resource "aws_security_group_rule" "yb-db-nodes-egress-public"{
@@ -328,14 +319,14 @@ resource "aws_security_group_rule" "default-remote-ingress"{
   security_group_id = aws_vpc.vpc.default_security_group_id
 }
 
-resource "aws_security_group_rule" "default-egress"{
-  type             = "egress"
-  from_port        = 0
-  to_port          = 0
-  protocol         = "-1"
-  cidr_blocks      = ["0.0.0.0/0"]
-  security_group_id = aws_vpc.vpc.default_security_group_id
-}
+# resource "aws_security_group_rule" "default-egress"{
+#   type             = "egress"
+#   from_port        = 0
+#   to_port          = 0
+#   protocol         = "-1"
+#   cidr_blocks      = ["0.0.0.0/0"]
+#   security_group_id = aws_vpc.vpc.default_security_group_id
+# }
 
 
 
