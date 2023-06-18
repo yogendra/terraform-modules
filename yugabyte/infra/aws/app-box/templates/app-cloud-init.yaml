@@ -1,0 +1,80 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+resize_rootfs: true
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+groups:
+  - docker
+
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups:
+  - users
+  - docker
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+  - ${public-key}
+system_info:
+  default_user:
+    groups: [docker]
+write_files:
+- path: /etc/netplan/99-lo.yaml
+  defer: true
+  owner: root:root
+  permissions: '0611'
+  content:  |
+    network:
+      ethernets:
+        lo:
+          addresses:
+          - 127.0.0.1/8
+          - 127.0.0.2/8
+          - 127.0.0.3/8
+          - 127.0.0.4/8
+          - 127.0.0.5/8
+          - 127.0.0.6/8
+          - 127.0.0.7/8
+          - 127.0.0.8/8
+          - 127.0.0.9/8
+          - 127.0.0.10/8
+          - 127.0.0.11/8
+          - 127.0.0.12/8
+          - 127.0.0.13/8
+          - 127.0.0.14/8
+          - 127.0.0.15/8
+      version: 2
+- path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
+  content: |
+    net.ipv4.conf.all.forwarding=1
+packages:
+- unattended-upgrades
+- apt-transport-https
+- ca-certificates
+- containerd.io
+- curl
+- docker-ce
+- docker-ce-cli
+- software-properties-common
+- docker-compose
+- python-is-python3
+bootcmd:
+%{ for b in boot-commands ~}
+- |
+  ${b}
+%{ endfor ~}
+runcmd:
+- mkdir /root/certs
+- openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
+- openssl pkcs12 -export -in /root/certs/server-cert.pem -inkey /root/certs/server-key.pem -out /root/certs/server-cert.p12 -password pass:changeit -name server-key
+- curl -sSL https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/bin/yb-docker-ctl -o /root/bin/yb-docker-ctl && chmod +x /root/bin/yb-docker-ctl
+%{ for s in startup-commands ~}
+- |
+  ${s}
+%{ endfor ~}
