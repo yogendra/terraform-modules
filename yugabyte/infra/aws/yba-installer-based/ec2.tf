@@ -68,45 +68,25 @@ resource "aws_instance" "yba" {
   }
 }
 
+locals{
+  hostname = length(var.hostname) > 0? var.hostname: replace(lower("${var.prefix}-yba"), "/[^0-9A-Za-z]/","-")
+  fqdn = length(var.aws-hosted-zone-name) > 0 ? aws_route53_record.vm-dns[0].fqdn : ""
+}
+resource "aws_eip" "vm-ip" {
+  domain = "vpc"
+  instance = aws_instance.yba.id
+}
+data "aws_route53_zone" "dns-zone" {
+  count = length(var.aws-hosted-zone-name) > 0 ? 1:0
+  name         = var.aws-hosted-zone-name
+}
 
-# resource "aws_ssm_document" "cloud_init_wait" {
-#   name = "${local.prefix}-cloud-init-wait"
-#   document_type = "Command"
-#   document_format = "YAML"
-#   content = <<-DOC
-#     schemaVersion: '2.2'
-#     description: Wait for cloud init to finish
-#     mainSteps:
-#     - action: aws:runShellScript
-#       name: StopOnLinux
-#       precondition:
-#         StringEquals:
-#         - platformType
-#         - Linux
-#       inputs:
-#         runCommand:
-#         - cloud-init status --wait
-#     DOC
-# }
 
-# resource "null_resource" "init-finish" {
-#   provisioner "local-exec" {
-#       interpreter = ["/bin/bash", "-c"]
-
-#       command = <<-EOF
-#       set -Ee -o pipefail
-#       export AWS_DEFAULT_REGION=${data.aws_region.current.name}
-
-#       command_id=$(aws ssm send-command --document-name ${aws_ssm_document.cloud_init_wait.arn} --instance-ids ${self.id} --output text --query "Command.CommandId")
-#       if ! aws ssm wait command-executed --command-id $command_id --instance-id ${self.id}; then
-#         echo "Failed to start services on instance ${self.id}!";
-#         echo "stdout:";
-#         aws ssm get-command-invocation --command-id $command_id --instance-id ${self.id} --query StandardOutputContent;
-#         echo "stderr:";
-#         aws ssm get-command-invocation --command-id $command_id --instance-id ${self.id} --query StandardErrorContent;
-#         exit 1;
-#       fi;
-#       echo "Services started successfully on the new instance with id ${self.id}!"
-#       EOF
-#     }
-# }
+resource "aws_route53_record" "vm-dns" {
+  count = length(var.aws-hosted-zone-name) > 0 ? 1:0
+  zone_id = data.aws_route53_zone.dns-zone[0].zone_id
+  name    = "${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_eip.vm-ip.public_ip]
+}

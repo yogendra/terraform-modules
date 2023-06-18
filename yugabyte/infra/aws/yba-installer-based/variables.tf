@@ -88,3 +88,14 @@ variable "prefix" {
   type = string
   description = "prefix for all resources"
 }
+
+variable "hostname" {
+  type = string
+  description = "Hostname for app VM. If not given, it is generated automatically based on hosted zone, prefix"
+  default = ""
+}
+variable "aws-hosted-zone-name" {
+  type = string
+  description = "AWS Hosted Zone Name. Optional. If specified, an A record will be created in the hosted zone"
+  default = ""
+}

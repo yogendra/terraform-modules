@@ -23,7 +23,7 @@ locals {
   online_install = true
   yba-ami = var.ami
   yba-instance-type = var.instance-type
-
+  public-key = data.aws_key_pair.yba-keypair.public_key
 
   # YBA Installer Config
   yba-version = var.yba-version

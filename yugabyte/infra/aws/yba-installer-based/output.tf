@@ -1,16 +1,16 @@
 
-output "instance-id" {
+output "vm-instance-id" {
   value = aws_instance.yba.id
 }
-output "yba"{
- value = aws_instance.yba
-}
-output "public-ip"{
+output "vm-public-ip"{
  value = aws_instance.yba.public_ip
 }
 
-output "private-ip"{
+output "vm-private-ip"{
  value = aws_instance.yba.private_ip
+}
+output "vm-fqdn" {
+  value =  length(var.aws-hosted-zone-name) > 0 ? aws_route53_record.vm-dns[0].fqdn : ""
 }
 
 output "helper-commands" {
@@ -30,6 +30,9 @@ echo "Host ${var.prefix}-yba
 
 # SSH command
 ssh  -i <private-key> ${var.prefix}-yba
+%{ if length(local.fqdn) > 0 ~}
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -i <private-key> ubuntu@${local.fqdn}
+%{ endif ~}
 COMMAND
 }
 
