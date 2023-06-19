@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
 }
 locals {
   ami-id = length(var.aws-ami) == 0? data.aws_ami.ubuntu[0].id : var.aws-ami
-  hostname = length(var.hostname) > 0? var.hostname: replace(lower("${var.prefix}-app-${var.app-name}"), "/[^0-9A-Za-z]/","-")
+  hostname = length(var.hostname) > 0? var.hostname: replace(lower("${var.app-name}-apps-${var.prefix}"), "/[^0-9A-Za-z]/","-")
 }
 
 data "aws_key_pair" "keypair" {

@@ -73,6 +73,7 @@ runcmd:
 - mkdir /root/certs
 - openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
 - openssl pkcs12 -export -in /root/certs/server-cert.pem -inkey /root/certs/server-key.pem -out /root/certs/server-cert.p12 -password pass:changeit -name server-key
+- chmod a+r /root/certs/*
 - curl -sSL https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/bin/yb-docker-ctl -o /root/bin/yb-docker-ctl && chmod +x /root/bin/yb-docker-ctl
 %{ for s in startup-commands ~}
 - |
