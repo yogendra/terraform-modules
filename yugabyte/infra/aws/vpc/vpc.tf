@@ -6,7 +6,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_support = true
 
   tags = {
-    Name = "${var.project_config.prefix}-${local.region}"
+    Name = "${var.prefix}-${local.region}"
     yb_aws_service = "vpc"
     yb_resource_type = "vpc"
   }

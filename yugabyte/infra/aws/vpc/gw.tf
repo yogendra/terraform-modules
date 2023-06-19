@@ -2,7 +2,7 @@ resource "aws_internet_gateway" "igw" {
   count = local.create_igw ? 1 : 0
   vpc_id = aws_vpc.vpc.id
   tags = {
-    "Name" = "${var.project_config.prefix}-igw"
+    "Name" = "${var.prefix}-igw"
     yb_aws_service = "vpc"
     yb_resource_type = "igw"
   }
@@ -13,7 +13,7 @@ module "nat" {
   count = local.create_nat_gw ? 1 : 0
   source = "int128/nat-instance/aws"
 
-  name                        = "${var.project_config.prefix}-nat"
+  name                        = "${var.prefix}-nat"
   vpc_id                      = aws_vpc.vpc.id
   key_name                    = aws_key_pair.keypair[0].key_name
   instance_types              = lookup(local.nat-instance-types-override, local.region, local.nat-instance-types-override.default )
@@ -22,7 +22,7 @@ module "nat" {
   private_route_table_ids     = [aws_route_table.private.id, aws_default_route_table.default.id]
   use_spot_instance           = true
   tags = {
-    Name = "${var.project_config.prefix}-nat"
+    Name = "${var.prefix}-nat"
     yb_aws_service = "vpc"
     yb_resource_type = "nat"
   }
@@ -34,7 +34,7 @@ resource "aws_eip" "nat"{
   network_interface = one(module.nat).eni_id
 
   tags = {
-    Name = "${var.project_config.prefix}-nat"
+    Name = "${var.prefix}-nat"
     yb_aws_service = "ec2"
     yb_resource_type = "eip"
   }

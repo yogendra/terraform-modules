@@ -18,7 +18,7 @@ locals {
   ])
   public_cidrs = local.public_subnets.*.cidr
   private_cidrs  = local.private_subnets.*.cidr
-  project_cidrs = [var.project_config.cidr]
+  project_cidrs = var.cidrs
   region = data.aws_region.current.name
   create_igw =   !var.config.air-gapped
   create_endpoints = var.config.air-gapped && !var.config.use-nat

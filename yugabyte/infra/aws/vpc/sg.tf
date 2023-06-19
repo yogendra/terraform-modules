@@ -1,9 +1,9 @@
 resource "aws_security_group" "app"{
-  name        = "${var.project_config.prefix}-app"
+  name        = "${var.prefix}-app"
   description = "SG for applications nodes"
   vpc_id      = aws_vpc.vpc.id
   tags = {
-    Name = "${var.project_config.prefix}-app"
+    Name = "${var.prefix}-app"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
   }
@@ -56,11 +56,11 @@ resource "aws_security_group_rule" "app-3000" {
 
 
 resource "aws_security_group" "yba-node" {
-  name        = "${var.project_config.prefix}-yba-nodes"
+  name        = "${var.prefix}-yba-nodes"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
   tags = {
-    Name = "${var.project_config.prefix}-yba-node"
+    Name = "${var.prefix}-yba-node"
   }
 }
 
@@ -135,11 +135,11 @@ resource "aws_security_group_rule" "yba-node-allow-mpl" {
 
 
 resource "aws_security_group" "yb-db-nodes" {
-  name        = "${var.project_config.prefix}-ybdb"
+  name        = "${var.prefix}-ybdb"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
   tags = {
-    Name = "${var.project_config.prefix}-yba-db-node"
+    Name = "${var.prefix}-yba-db-node"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
   }

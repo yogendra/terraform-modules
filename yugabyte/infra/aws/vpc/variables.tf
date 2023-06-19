@@ -8,15 +8,51 @@ variable "config" {
       cidr = string,
       subnets = map(string)
     }))
-
   })
 }
 
-variable "project_config"{
-  type = object({
-    prefix = string
-    cidr = string
-    ssh-public-keys = list(string),
-    remote-ips = map(string)
-  })
+variable "prefix" {
+  type = string
+  description = "Prefix for resources"
+  default = "shr"
+}
+
+variable "state-bucket" {
+  type = string
+  description = "State Bucket"
+  default = "yb-apj-iac"
+}
+variable "env-config-location" {
+  type = string
+  description = "Environment config file location in the Bucket"
+  default = "assets/configs/apj-demo/shared"
+}
+variable "tags" {
+  type = map(string)
+  description = "Tags for resources"
+  default =  {
+    yb_owner = "yrampuria",
+    yb_dept = "presales",
+    yb_task = "demo",
+    yb_customer = "yugabyte"
+    yb_env      = "shr"
+  }
+}
+
+variable "cidrs" {
+  type = list(string)
+  description = "Project CIDRs"
+}
+variable "remote-ips"{
+  type = map(string)
+  description = "Well Know Remote IPs by the owner / service name"
+}
+variable "ssh-public-keys" {
+  type = list(string)
+  description = "Public Keys to add to project"
+}
+
+variable "db-zone-id" {
+  type = string
+  description = "Route53 DB Zone ID"
 }

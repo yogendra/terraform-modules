@@ -6,7 +6,7 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.private.id,aws_route_table.private.id, aws_vpc.vpc.default_route_table_id]
   tags = {
-    Name = "${var.project_config.prefix}-s3"
+    Name = "${var.prefix}-s3"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "s3"
   }
@@ -14,7 +14,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 
 resource "aws_security_group" "allow-vpc-internal" {
-  name        = "${var.project_config.prefix}-vpc-internal"
+  name        = "${var.prefix}-vpc-internal"
   description = "Allow Internal VPC traffic only"
   vpc_id      = aws_vpc.vpc.id
   ingress {
@@ -25,7 +25,7 @@ resource "aws_security_group" "allow-vpc-internal" {
     cidr_blocks      = var.config.cidrs
   }
   tags = {
-    Name = "${var.project_config.prefix}-vpc-internal"
+    Name = "${var.prefix}-vpc-internal"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
   }
@@ -41,7 +41,7 @@ resource "aws_vpc_endpoint" "ssm" {
   subnet_ids          = aws_subnet.private[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${var.project_config.prefix}-ssm"
+    Name = "${var.prefix}-ssm"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "ssm"
   }
@@ -57,7 +57,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
   private_dns_enabled = true
   tags = {
 
-    Name = "${var.project_config.prefix}-ec2messages"
+    Name = "${var.prefix}-ec2messages"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "ec2messages"
   }
@@ -71,7 +71,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
   subnet_ids          = aws_subnet.private[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${var.project_config.prefix}-ssmmessages"
+    Name = "${var.prefix}-ssmmessages"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "ssmmessages"
   }
@@ -87,7 +87,7 @@ resource "aws_vpc_endpoint" "ec2" {
   subnet_ids          = aws_subnet.private[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${var.project_config.prefix}-ec2"
+    Name = "${var.prefix}-ec2"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "ec2"
   }
@@ -103,7 +103,7 @@ resource "aws_vpc_endpoint" "kms" {
   subnet_ids          = aws_subnet.private[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${var.project_config.prefix}-kms"
+    Name = "${var.prefix}-kms"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "kms"
   }
@@ -119,7 +119,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   subnet_ids          = aws_subnet.private[*].id
   private_dns_enabled = true
   tags = {
-    Name = "${var.project_config.prefix}-cloudwatch"
+    Name = "${var.prefix}-cloudwatch"
     yb_aws_service = "vpc_endpoint"
     yb_resource_type = "cloudwatch"
   }
