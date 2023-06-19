@@ -1,0 +1,135 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+resize_rootfs: true
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+groups:
+  - docker
+
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups:
+  - users
+  - docker
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNFVe3z8zrNMJLyRXRMOGDuyJryW8kzbR9vsZ3QlPMrJmjEQvqL3c21VJAbJG/0BwpQbUsR/YNdww61w+7+bRiXCCI70jsBEt0KZqSYNmSNmiRjJdQwP+g7Kiav8E/Kb01pSVyDD3CfNYBzMPksxwn0F/9dHlD8d1JMjbxQ8Pc1jYt3ShFWLcvLAxfFXfAPFXnwo++b9JAjtzlDh7ykc5RbErQZmh2ZUS7FRbN8J/CoksH0fJOyLYrn4+CDtJlI5EgSEnSDbbF4L4vJVfCL20+1Q3r0Bfez5BcLj+I69goB/Ij8iHh3X3KfihjWppWw42Vs6w7SbEjmkn50/D/fPzHmv8Cdy4vFQLPWr4ybREmyvnY0NeIJJ0BYlb48JkI6wPlHPz46QrnFUh6gWRIzzdf611jlz4LOLMlZWeIiwXCXL0ejKbNKtQuS6xX5RTjrlTXxgmS1O4LYAM/NmX80PNL2cuaHoG8PLlAHGQthYcUIhfW3M3WUwHYi+VsJsXRZhU= yba-apj-demo-shr
+system_info:
+  default_user:
+    groups: [docker]
+write_files:
+- path: /etc/netplan/99-lo.yaml
+  defer: true
+  owner: root:root
+  permissions: '0611'
+  content:  |
+    network:
+      ethernets:
+        lo:
+          addresses:
+          - 127.0.0.1/8
+          - 127.0.0.2/8
+          - 127.0.0.3/8
+          - 127.0.0.4/8
+          - 127.0.0.5/8
+          - 127.0.0.6/8
+          - 127.0.0.7/8
+          - 127.0.0.8/8
+          - 127.0.0.9/8
+          - 127.0.0.10/8
+          - 127.0.0.11/8
+          - 127.0.0.12/8
+          - 127.0.0.13/8
+          - 127.0.0.14/8
+          - 127.0.0.15/8
+      version: 2
+- path: /root/.tmux.conf
+  defer: true
+  owner: root:root
+  permission: '0611'
+  content: |
+    set -g @plugin 'tmux-plugins/tpm'
+    set -g @plugin 'tmux-plugins/tmux-sensible'
+
+    run '~/.tmux/plugins/tpm/tpm'
+- path: /root/.config/code-server/config.yaml
+  defer: true
+  owner: root:root
+  permission: '0611'
+  content: |
+    bind-addr: 0.0.0.0:443
+    auth: password
+    password: ${password}
+    cert: /root/certs/server-cert.pem
+    cert-key: /root/certs/server-key.pem
+    app-name: YugabyteDB Demo
+    welcome-text: |
+      Welcome to YugabyteDB Demo Environment.
+      Test
+      Test
+      Test
+- path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
+  content: |
+    net.ipv4.conf.all.forwarding=1
+packages:
+- unattended-upgrades
+- apt-transport-https
+- ca-certificates
+- containerd.io
+- curl
+- direnv
+- git
+- golang-go
+- docker-ce
+- docker-ce-cli
+- gnupg
+- gnupg-agent
+- jq
+- net-tools
+- openjdk-17-jdk
+- software-properties-common
+- docker-compose
+- python-is-python3
+- awscli
+- fzf
+bootcmd:
+- aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
+runcmd:
+- mkdir /root/certs
+- openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
+- git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+- aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
+- curl -fsSL https://code-server.dev/install.sh | HOME=/root bash
+- systemctl enable --now code-server@root
+- code-server --install-extension ms-toolsai.vscode-jupyter-slideshow
+- code-server --install-extension ms-toolsai.jupyter
+- code-server --install-extension mtxr.sqltools
+- code-server --install-extension mtxr.sqltools-driver-pg
+- code-server --install-extension ms-azuretools.vscode-docker
+- code-server --install-extension ms-python.python
+- curl -sSL https://downloads.yugabyte.com/releases/2.18.0.1/yugabyte-2.18.0.1-b4-linux-x86_64.tar.gz -o /root/yugabyte.tgz
+- mkdir -p /root/yugabyte mkdir /root/bin
+- tar -C /root/yugabyte -xzf /root/yugabyte.tgz --strip-components=1
+- cd /root/yugabyte
+- ./bin/post_install.sh
+- curl -sSL https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/bin/yb-docker-ctl -o /root/bin/yb-docker-ctl && chmod +x /root/bin/yb-docker-ctl
+- curl -sSL https://s3.us-west-2.amazonaws.com/downloads.yugabyte.com/repos/reporpms/yb-apt-repo_1.0.0_all.deb -o yb-apt-repo.deb
+- apt-get install -qqy ./yb-apt-repo.deb
+- apt-get update
+- apt-get install -qqy yb-voyager
+- rm yb-apt-repo.deb
+- echo "export PATH=\$PATH:/root/bin:/root/yugabyte/bin:/root/yugabyte/tools:/root/yugabyte/posgres/bin" >> /root/.bashrc
+- echo "export PATH=\$PATH:/root/bin:/root/yugabyte/bin:/root/yugabyte/tools:/root/yugabyte/posgres/bin" >> /root/.bashrc
+- curl -sS https://starship.rs/install.sh | sh -s -- -f
+- echo "eval \"\$(starship init bash)\"" >> /root/.bashrc
+- echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >> /root/.bashrc
+- curl -sSL https://github.com/YugabyteDB-Samples/yb-workload-simulator/releases/download/v0.0.6/yb-workload-sim-0.0.6.jar -o /root/yb-workload-sim-0.0.6.jar
+- curl -sSL https://github.com/yugabyte/yb-sample-apps/releases/download/v1.4.1/yb-sample-apps.jar -o /root/yb-sample-apps.jar
+- netplan apply
