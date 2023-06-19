@@ -69,7 +69,7 @@ resource "aws_instance" "yba" {
 }
 
 locals{
-  hostname = length(var.hostname) > 0? var.hostname: replace(lower("${var.prefix}-yba"), "/[^0-9A-Za-z]/","-")
+  hostname = length(var.hostname) > 0? var.hostname: replace(lower("yba-${var.prefix}"), "/[^0-9A-Za-z]/","-")
   fqdn = length(var.aws-hosted-zone-name) > 0 ? aws_route53_record.vm-dns[0].fqdn : ""
 }
 resource "aws_eip" "vm-ip" {
