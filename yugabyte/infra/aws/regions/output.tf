@@ -1,0 +1,31 @@
+output "regioanl-resources" {
+  value = {
+    af_south_1 = module.af_south_1
+    ap_east_1 = module.ap_east_1
+    ap_northeast_1 = module.ap_northeast_1
+    ap_northeast_2 = module.ap_northeast_2
+    ap_northeast_3 = module.ap_northeast_3
+    ap_south_1 = module.ap_south_1
+    ap_south_2 = module.ap_south_2
+    ap_southeast_1 = module.ap_southeast_1
+    ap_southeast_2 = module.ap_southeast_2
+    ap_southeast_3 = module.ap_southeast_3
+    ap_southeast_4 = module.ap_southeast_4
+    ca_central_1 = module.ca_central_1
+    eu_central_1 = module.eu_central_1
+    eu_central_2 = module.eu_central_2
+    eu_north_1 = module.eu_north_1
+    eu_south_1 = module.eu_south_1
+    eu_south_2 = module.eu_south_2
+    eu_west_1 = module.eu_west_1
+    eu_west_2 = module.eu_west_2
+    eu_west_3 = module.eu_west_3
+    me_central_1 = module.me_central_1
+    me_south_1 = module.me_south_1
+    sa_east_1 = module.sa_east_1
+    us_east_1 = module.us_east_1
+    us_east_2 = module.us_east_2
+    us_west_1 = module.us_west_1
+    us_west_2 = module.us_west_2
+  }
+}
