@@ -9,6 +9,14 @@ resource "aws_ec2_managed_prefix_list" "well-known" {
     yb_resource_type = "mpl"
   })
 }
+
+resource "aws_ec2_managed_prefix_list_entry" "allow-well-known-cidrs" {
+  count          = local.create_mpl ? length(var.well-known-cidrs) : 0
+  cidr           = var.well-known-cidrs[count.index]
+  description    = "Access from ${var.well-known-cidrs[count.index]}"
+  prefix_list_id = aws_ec2_managed_prefix_list.well-known[0].id
+}
+
 output "mpl-enabled" {
   value = local.create_mpl
 }

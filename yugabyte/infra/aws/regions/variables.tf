@@ -18,3 +18,9 @@ variable "public-keys" {
   description = "Public keys to add as keypair"
   default = []
 }
+
+variable "well-known-cidrs" {
+  type = list(string)
+  description = "Well know addresses for this project"
+  default = []
+}
