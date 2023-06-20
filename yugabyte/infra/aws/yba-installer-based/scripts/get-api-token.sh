@@ -17,7 +17,7 @@ log Input :: api=$api login=$login password=$password
 
 until  curl -m1 -fksSL $api/app_version &>> $logfile
 do
-  log "waiting"
+  log "yba waiting"
   sleep 5
 done
 
@@ -30,6 +30,13 @@ lreq=$(cat <<- EOM
 }
 EOM
 )
+until curl -fksSL -H Content-Type:application/json -X POST $api/login  -d "$lreq" &>> $logfile
+do
+  log "login waiting"
+  sleep 5
+done
+log "login successful"
+
 lres=$(curl \
   -k \
   -sSL \

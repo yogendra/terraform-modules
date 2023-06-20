@@ -3,7 +3,7 @@ output "vm-instance-id" {
   value = aws_instance.yba.id
 }
 output "vm-public-ip"{
- value = aws_instance.yba.public_ip
+ value = aws_eip.vm-ip.public_ip
 }
 
 output "vm-private-ip"{

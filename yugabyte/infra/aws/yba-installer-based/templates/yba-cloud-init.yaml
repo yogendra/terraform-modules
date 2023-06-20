@@ -60,8 +60,8 @@ runcmd:
 - ["/opt/${yba-installer-dirname}/yba-ctl", "preflight", "--force"]
 - ["/opt/${yba-installer-dirname}/yba-ctl", "install"]
 - ["chown", "-R", "yugabyte:yugabyte", "/home/yugabyte", "/opt/yugabyte", "/opt/yba-ctl", "/opt/${yba-installer-dirname}"]
-- ["curl", "-X", "POST", "-sSkL", "https://localhost/api/v1/register?generateApiToken=true", "-d", "{\"code\": \"${yba-environment-type}\", \"name\": \"${yba-user-name}\", \"email\": \"${yba-user-email}\", \"password\": \"${yba-user-password}\", \"confirmPassword\":\"${yba-user-password}\", \"confirmEULA\": true }", "-H", "content-type:application/json"]
+- ["curl", "-X", "POST", "-sSkL", "https://localhost/api/v1/register?generateApiToken=true", "-d", "{\"code\": \"${env}\", \"name\": \"${name}\", \"email\": \"${email}\", \"password\": \"${password}\", \"confirmPassword\":\"${password}\", \"confirmEULA\": true }", "-H", "content-type:application/json"]
 
-power_state:
-    mode: reboot
-    timeout: 30
+# power_state:
+#     mode: reboot
+#     timeout: 30

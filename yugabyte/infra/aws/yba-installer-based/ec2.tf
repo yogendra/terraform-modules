@@ -10,13 +10,14 @@ data "cloudinit_config" "yba" {
       yba-installer-url = local.yba-installer-url
       yba-installer-package-filename = local.yba-installer-package-filename
       yba-installer-dirname = local.yba-installer-dirname
-      yba-user-email = var.yba-superadmin-email
-      yba-user-name = var.yba-superadmin-name
-      yba-user-password = var.yba-superadmin-password
-      yba-environment-type = var.yba-environment-type
+      email = var.yba-superadmin-email
+      name = var.yba-superadmin-name
+      password = var.yba-superadmin-password
+      env = var.yba-environment-type
     })
   }
 }
+
 resource "aws_instance" "yba" {
   ami                    = local.yba-ami
   instance_type          = local.yba-instance-type
@@ -74,11 +75,15 @@ locals{
 }
 resource "aws_eip" "vm-ip" {
   domain = "vpc"
-  instance = aws_instance.yba.id
   tags = {
     Name = "${var.prefix}-yba"
   }
 }
+resource "aws_eip_association" "eip-assoc" {
+  instance_id   = aws_instance.yba.id
+  allocation_id = aws_eip.vm-ip.id
+}
+
 data "aws_route53_zone" "dns-zone" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
   name         = var.aws-hosted-zone-name
@@ -98,6 +103,11 @@ data "external" "get-api-token" {
   query = {
     login = var.yba-superadmin-email
     password = var.yba-superadmin-password
-    api = "https://${aws_instance.yba.public_ip}/api/v1"
+    api = "https://${aws_eip.vm-ip.public_ip}/api/v1"
   }
+  depends_on = [
+    aws_instance.yba,
+    aws_eip.vm-ip,
+    aws_route53_record.vm-dns
+  ]
 }
