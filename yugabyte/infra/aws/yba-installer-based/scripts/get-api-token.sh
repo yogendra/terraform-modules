@@ -2,7 +2,7 @@
 
 set -e
 logfile=/tmp/tf-yba-run.log
-RUNID=$$-$BASHPID
+RUNID=$$
 function log(){
   echo "[$(date -Iseconds)] [$RUNID] $@" >> $logfile
 }
@@ -13,15 +13,16 @@ log ---------------------------------Start--------------------------------------
 
 eval "$(jq -r '@sh "login=\(.login) password=\(.password) api=\(.api)"')"
 
-log env
-log "$(env)"
+log Input :: api=$api login=$login password=$password
 
-until  curl -fkL $api/app_version &>> $logfile
+until  curl -m1 -fksSL $api/app_version &>> $logfile
 do
   log "waiting"
   sleep 5
 done
+
 log "ready"
+
 lreq=$(cat <<- EOM
 {
   "email": "$login",
@@ -29,14 +30,13 @@ lreq=$(cat <<- EOM
 }
 EOM
 )
-lres=$(
-  curl \
-    -k \
-    -sSL \
-    -H Content-Type:application/json \
-    -X POST \
-    $api/login  \
-    -d "$lreq"
+lres=$(curl \
+  -k \
+  -sSL \
+  -H Content-Type:application/json \
+  -X POST \
+  $api/login  \
+  -d "$lreq"
 )
 log "login response $lres"
 
@@ -45,8 +45,7 @@ uid=$(echo $lres | jq -r '.userUUID')
 custapi=$api/customers/$custid
 authtoken=$(echo $lres | jq -r '.authToken')
 
-sres=$(
-curl \
+sres=$(curl \
   -k \
   -sSL \
   -H "X-AUTH-TOKEN: $authtoken" \
