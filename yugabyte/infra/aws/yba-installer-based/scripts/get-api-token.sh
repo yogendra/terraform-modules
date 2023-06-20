@@ -1,14 +1,27 @@
 #!/usr/bin/env bash
 
 set -e
+logfile=/tmp/tf-yba-run.log
+RUNID=$$-$BASHPID
+function log(){
+  echo "[$(date -Iseconds)] [$RUNID] $@" >> $logfile
+}
+
+log ---------------------------------Start--------------------------------------
+
+
 
 eval "$(jq -r '@sh "login=\(.login) password=\(.password) api=\(.api)"')"
 
-until  curl -fksSL $api/app_version &>/dev/null
+log env
+log "$(env)"
+
+until  curl -fkL $api/app_version &>> $logfile
 do
+  log "waiting"
   sleep 5
 done
-
+log "ready"
 lreq=$(cat <<- EOM
 {
   "email": "$login",
@@ -25,6 +38,8 @@ lres=$(
     $api/login  \
     -d "$lreq"
 )
+log "login response $lres"
+
 cid=$(echo $lres | jq -r '.customerUUID')
 uid=$(echo $lres | jq -r '.userUUID')
 custapi=$api/customers/$custid
@@ -40,7 +55,10 @@ curl \
   $api/session_info
 )
 
+log "session info $sres"
+
 apitoken=$(echo $sres | jq -r '.apiToken')
+log -----------------------------------End--------------------------------------
 
 jq \
   -n \
