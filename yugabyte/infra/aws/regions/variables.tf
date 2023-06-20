@@ -13,3 +13,8 @@ variable "tags" {
     yb_customer = "yugabyte"
   }
 }
+variable "public-keys" {
+  type = list(string)
+  description = "Public keys to add as keypair"
+  default = []
+}

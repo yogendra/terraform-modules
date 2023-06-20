@@ -1,31 +1,63 @@
-output "regioanl-resources" {
+output "regional-resources" {
   value = {
-    af_south_1 = module.af_south_1
-    ap_east_1 = module.ap_east_1
-    ap_northeast_1 = module.ap_northeast_1
-    ap_northeast_2 = module.ap_northeast_2
-    ap_northeast_3 = module.ap_northeast_3
-    ap_south_1 = module.ap_south_1
-    ap_south_2 = module.ap_south_2
-    ap_southeast_1 = module.ap_southeast_1
-    ap_southeast_2 = module.ap_southeast_2
-    ap_southeast_3 = module.ap_southeast_3
-    ap_southeast_4 = module.ap_southeast_4
-    ca_central_1 = module.ca_central_1
-    eu_central_1 = module.eu_central_1
-    eu_central_2 = module.eu_central_2
-    eu_north_1 = module.eu_north_1
-    eu_south_1 = module.eu_south_1
-    eu_south_2 = module.eu_south_2
-    eu_west_1 = module.eu_west_1
-    eu_west_2 = module.eu_west_2
-    eu_west_3 = module.eu_west_3
-    me_central_1 = module.me_central_1
-    me_south_1 = module.me_south_1
-    sa_east_1 = module.sa_east_1
-    us_east_1 = module.us_east_1
-    us_east_2 = module.us_east_2
-    us_west_1 = module.us_west_1
-    us_west_2 = module.us_west_2
+    af-south-1 = module.af-south-1
+    ap-east-1 = module.ap-east-1
+    ap-northeast-1 = module.ap-northeast-1
+    ap-northeast-2 = module.ap-northeast-2
+    ap-northeast-3 = module.ap-northeast-3
+    ap-south-1 = module.ap-south-1
+    ap-south-2 = module.ap-south-2
+    ap-southeast-1 = module.ap-southeast-1
+    ap-southeast-2 = module.ap-southeast-2
+    ap-southeast-3 = module.ap-southeast-3
+    ap-southeast-4 = module.ap-southeast-4
+    ca-central-1 = module.ca-central-1
+    eu-central-1 = module.eu-central-1
+    eu-central-2 = module.eu-central-2
+    eu-north-1 = module.eu-north-1
+    eu-south-1 = module.eu-south-1
+    eu-south-2 = module.eu-south-2
+    eu-west-1 = module.eu-west-1
+    eu-west-2 = module.eu-west-2
+    eu-west-3 = module.eu-west-3
+    me-central-1 = module.me-central-1
+    me-south-1 = module.me-south-1
+    sa-east-1 = module.sa-east-1
+    us-east-1 = module.us-east-1
+    us-east-2 = module.us-east-2
+    us-west-1 = module.us-west-1
+    us-west-2 = module.us-west-2
+  }
+}
+
+output "mpl-lists" {
+  value = {
+    af-south-1 = module.af-south-1.mpl-lists
+    ap-east-1 = module.ap-east-1.mpl-lists
+    ap-northeast-1 = module.ap-northeast-1.mpl-lists
+    ap-northeast-2 = module.ap-northeast-2.mpl-lists
+    ap-northeast-3 = module.ap-northeast-3.mpl-lists
+    ap-south-1 = module.ap-south-1.mpl-lists
+    ap-south-2 = module.ap-south-2.mpl-lists
+    ap-southeast-1 = module.ap-southeast-1.mpl-lists
+    ap-southeast-2 = module.ap-southeast-2.mpl-lists
+    ap-southeast-3 = module.ap-southeast-3.mpl-lists
+    ap-southeast-4 = module.ap-southeast-4.mpl-lists
+    ca-central-1 = module.ca-central-1.mpl-lists
+    eu-central-1 = module.eu-central-1.mpl-lists
+    eu-central-2 = module.eu-central-2.mpl-lists
+    eu-north-1 = module.eu-north-1.mpl-lists
+    eu-south-1 = module.eu-south-1.mpl-lists
+    eu-south-2 = module.eu-south-2.mpl-lists
+    eu-west-1 = module.eu-west-1.mpl-lists
+    eu-west-2 = module.eu-west-2.mpl-lists
+    eu-west-3 = module.eu-west-3.mpl-lists
+    me-central-1 = module.me-central-1.mpl-lists
+    me-south-1 = module.me-south-1.mpl-lists
+    sa-east-1 = module.sa-east-1.mpl-lists
+    us-east-1 = module.us-east-1.mpl-lists
+    us-east-2 = module.us-east-2.mpl-lists
+    us-west-1 = module.us-west-1.mpl-lists
+    us-west-2 = module.us-west-2.mpl-lists
   }
 }

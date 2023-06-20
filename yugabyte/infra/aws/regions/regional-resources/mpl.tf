@@ -9,9 +9,11 @@ resource "aws_ec2_managed_prefix_list" "well-known" {
     yb_resource_type = "mpl"
   })
 }
-output "mpl" {
+output "mpl-enabled" {
+  value = local.create_mpl
+}
+output "mpl-lists" {
   value = {
-    enabled = local.create_mpl
     well-known = local.create_mpl? one(aws_ec2_managed_prefix_list.well-known.*.id): ""
   }
 }
