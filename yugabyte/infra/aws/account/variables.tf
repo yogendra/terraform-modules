@@ -15,3 +15,14 @@ variable "tags" {
     yb_env      = "shr"
   }
 }
+
+variable "vpc-id" {
+  type = string
+  description = "Any existing VPC to associate with DNS Zone"
+  default = ""
+}
+variable "vpc-region" {
+  type = string
+  description = "Any existing VPC Region to associate with DNS Zone"
+  default = ""
+}
