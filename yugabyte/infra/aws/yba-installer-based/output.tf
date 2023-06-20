@@ -11,16 +11,36 @@ output "vm-private-ip"{
 }
 output "vm-fqdn" {
   value =  length(var.aws-hosted-zone-name) > 0 ? aws_route53_record.vm-dns[0].fqdn : ""
+
 }
-output "yba-superadmin-email" {
+output "superadmin-email" {
   value = var.yba-superadmin-email
 }
-output "yba-superadmin-password" {
+output "superadmin-password" {
   value = var.yba-superadmin-password
 }
-output "yba-version" {
+output "version" {
   value = var.yba-version
 }
+output "api-token"{
+  value = data.external.get-api-token.result.api-token
+}
+output "customer-id" {
+  value = data.external.get-api-token.result.customer-id
+}
+
+output "user-id" {
+  value = data.external.get-api-token.result.user-id
+}
+
+output "customer-api" {
+  value = data.external.get-api-token.result.customer-api
+}
+
+output "api" {
+  value = data.external.get-api-token.result.api
+}
+
 
 output "helper-commands" {
   value = <<COMMAND

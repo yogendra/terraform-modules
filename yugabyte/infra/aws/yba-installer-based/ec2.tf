@@ -90,6 +90,14 @@ resource "aws_route53_record" "vm-dns" {
   zone_id = data.aws_route53_zone.dns-zone[0].zone_id
   name    = "${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
   type    = "A"
-  ttl     = "300"
+  ttl     = "5"
   records = [aws_eip.vm-ip.public_ip]
+}
+data "external" "get-api-token" {
+  program = ["${path.module}/scripts/get-api-token.sh"]
+  query = {
+    login = var.yba-superadmin-email
+    password = var.yba-superadmin-password
+    api = "https://${aws_instance.yba.public_ip}/api/v1"
+  }
 }
