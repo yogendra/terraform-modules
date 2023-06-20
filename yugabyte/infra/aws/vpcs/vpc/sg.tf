@@ -75,13 +75,13 @@ resource "aws_security_group_rule" "app-ingress-project" {
 }
 resource "aws_security_group_rule" "app-ingress-known" {
   security_group_id = aws_security_group.app.id
-  count            = length(var.mpl) > 0 ? 1 : 0
+  count            = local.use-mpl ? 1 : 0
   description      = "Allow Ingress from known networks"
   from_port        = 0
   to_port          = 0
   protocol         = "-1"
   type              = "ingress"
-  prefix_list_ids = var.mpl-ids
+  prefix_list_ids = [local.well-known-mpl]
 }
 
 resource "aws_security_group" "yba-node" {
@@ -155,13 +155,13 @@ resource "aws_security_group_rule" "yba-ingress-project" {
 
 resource "aws_security_group_rule" "yba-ingress-mpl" {
   security_group_id = aws_security_group.yba-node.id
-  count             = length(var.mpl-ids) > 0 ? 1 : 0
+  count             = local.use-mpl ? 1 : 0
   description       = "Allow incoming from known machines"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
   type              = "ingress"
-  prefix_list_ids   = var.mpl-ids
+  prefix_list_ids   = [local.well-known-mpl]
 }
 
 resource "aws_security_group" "yb-db-nodes" {
@@ -311,13 +311,13 @@ resource "aws_security_group_rule" "yb-db-nodes-54422" {
 }
 resource "aws_security_group_rule" "yb-db-nodes-allow-mpl" {
   security_group_id = aws_security_group.yb-db-nodes.id
-  count             = length(var.mpl-ids) > 0 ? 1 : 0
+  count             = local.use-mpl ? 1 : 0
   type              = "ingress"
   description       =  "Allow incoming from known machines"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  prefix_list_ids   = var.mpl-ids
+  prefix_list_ids   = [local.well-known-mpl]
 }
 
 resource "aws_security_group_rule" "default-internal-ingress"{
@@ -331,12 +331,12 @@ resource "aws_security_group_rule" "default-internal-ingress"{
 
 resource "aws_security_group_rule" "default-remote-ingress"{
   security_group_id = aws_vpc.vpc.default_security_group_id
-  count = local.create_mpl? 1 : 0
+  count = local.use-mpl ? 1 : 0
   type             = "ingress"
   from_port        = 0
   to_port          = 0
   protocol         = "-1"
-  prefix_list_ids  = var.mpl-ids
+  prefix_list_ids  = [local.well-known-mpl]
 }
 
 

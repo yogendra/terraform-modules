@@ -22,7 +22,7 @@ resource "aws_security_group" "allow-vpc-internal" {
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
-    cidr_blocks      = var.config.cidrs
+    cidr_blocks      = var.cidrs
   }
   tags = {
     Name = "${var.prefix}-vpc-internal"

@@ -7,7 +7,7 @@ output "vpc-id"{
 }
 
 output "vpc-cidrs"{
-  value = var.config.cidrs
+  value = var.cidrs
 }
 output "sg-app" {
   value = aws_security_group.app.id

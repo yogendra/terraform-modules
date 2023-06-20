@@ -15,7 +15,7 @@ module "nat" {
 
   name                        = "${var.prefix}-nat"
   vpc_id                      = aws_vpc.vpc.id
-  key_name                    = aws_key_pair.keypair[0].key_name
+  # key_name                    = var.
   instance_types              = lookup(local.nat-instance-types-override, local.region, local.nat-instance-types-override.default )
   public_subnet               = aws_subnet.public[0].id
   private_subnets_cidr_blocks = local.private_subnets[*].cidr

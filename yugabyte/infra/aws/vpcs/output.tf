@@ -1,6 +1,3 @@
-output "account-config" {
-  value = module.yb-account
-}
 output "vpc-by-region" {
   value = local.vpc-by-region
 }
