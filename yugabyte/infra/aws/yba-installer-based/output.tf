@@ -12,6 +12,15 @@ output "vm-private-ip"{
 output "vm-fqdn" {
   value =  length(var.aws-hosted-zone-name) > 0 ? aws_route53_record.vm-dns[0].fqdn : ""
 }
+output "yba-superadmin-email" {
+  value = var.yba-superadmin-email
+}
+output "yba-superadmin-password" {
+  value = var.yba-superadmin-password
+}
+output "yba-version" {
+  value = var.yba-version
+}
 
 output "helper-commands" {
   value = <<COMMAND

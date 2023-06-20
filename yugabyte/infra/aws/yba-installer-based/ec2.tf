@@ -75,6 +75,9 @@ locals{
 resource "aws_eip" "vm-ip" {
   domain = "vpc"
   instance = aws_instance.yba.id
+  tags = {
+    Name = "${var.prefix}-yba"
+  }
 }
 data "aws_route53_zone" "dns-zone" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
