@@ -14,6 +14,8 @@ data "cloudinit_config" "yba" {
       name = var.yba-superadmin-name
       password = var.yba-superadmin-password
       env = var.yba-environment-type
+      yba-ctl-yaml = var.yba-ctl-yaml
+      files = var.files
     })
   }
 }
