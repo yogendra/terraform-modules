@@ -28,6 +28,31 @@ disk_setup:
     layout: true
     overwrite: false
 write_files:
+%{ if yba-ctl-yaml != "" ~}
+- path: /opt/yba/yba-ctl.yaml
+  defer: true
+  owner: yugabyte:yugabyte
+  permissions: '0600'
+  content:  |
+    ${indent(4, yba-ctl-yaml)}
+%{ endif ~}
+%{ for file in files ~}
+- path: ${file.path}
+  defer: ${file.defer}
+  append: ${file.append}
+  permissions: "${file.permissions}"
+  owner: "${file.owner}"
+%{ if file.encoding != "" ~}
+  encoding: "${file.encoding}"
+%{ endif ~}
+%{ if file.binary ~}
+  content: !!binary |
+    ${indent(4, file.content)}
+%{ else ~}
+  content: |
+    ${indent(4, file.content)}
+%{ endif ~}
+%{ endfor ~}
 - path: /opt/yba-ctl/yba.lic
   defer: true
   owner: yugabyte:yugabyte
