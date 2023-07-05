@@ -53,7 +53,15 @@ resource "aws_security_group_rule" "app-3000" {
   type              = "ingress"
   security_group_id = aws_security_group.app.id
 }
-
+resource "aws_security_group_rule" "app-egress" {
+  description      = "Allow egress"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  cidr_blocks      = ["0.0.0.0/0"]
+  type             = "egress"
+  security_group_id = aws_security_group.app.id
+}
 
 resource "aws_security_group" "yba-node" {
   name        = "${var.prefix}-yba-nodes"
