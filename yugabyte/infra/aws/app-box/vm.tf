@@ -4,7 +4,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-${var.arch}-server-*"]
   }
 
   filter {
@@ -32,7 +32,9 @@ data "cloudinit_config" "ci" {
     content = templatefile("${path.module}/templates/app-cloud-init.yaml", {
       startup-commands = var.startup-commands
       boot-commands = var.boot-commands
+      write-files = var.files
       public-key = data.aws_key_pair.keypair.public_key
+      arch = var.arch
     })
   }
 }
@@ -61,7 +63,10 @@ resource "aws_instance" "vm" {
 
 resource "aws_eip" "vm-ip" {
   domain = "vpc"
-  instance = aws_instance.vm.id
+}
+resource "aws_eip_association" "vm-ip" {
+  instance_id = aws_instance.vm.id
+  allocation_id = aws_eip.vm-ip.id
 }
 data "aws_route53_zone" "dns-zone" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
@@ -73,7 +78,7 @@ resource "aws_route53_record" "vm-dns" {
   zone_id = data.aws_route53_zone.dns-zone[0].zone_id
   name    = "${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
   type    = "A"
-  ttl     = "300"
+  ttl     = "30"
   records = [aws_eip.vm-ip.public_ip]
 }
 resource "aws_route53_record" "star-vm-dns" {
@@ -81,6 +86,6 @@ resource "aws_route53_record" "star-vm-dns" {
   zone_id = data.aws_route53_zone.dns-zone[0].zone_id
   name    = "*.${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
   type    = "A"
-  ttl     = "300"
+  ttl     = "30"
   records = [aws_eip.vm-ip.public_ip]
 }

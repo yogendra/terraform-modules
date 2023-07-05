@@ -4,7 +4,7 @@ resize_rootfs: true
 apt:
   sources:
     docker.list:
-      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      source: deb [arch=${arch}] https://download.docker.com/linux/ubuntu $RELEASE stable
       keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
 groups:
   - docker
@@ -64,7 +64,31 @@ packages:
 - software-properties-common
 - docker-compose
 - python-is-python3
+
+%{ if length(write-files) > 0 ~}
+write_files:
+%{ endif ~}
+%{ for file in write-files ~}
+- path: ${file.path}
+  defer: ${file.defer}
+  append: ${file.append}
+  permissions: "${file.permissions}"
+  owner: "${file.owner}"
+%{ if file.encoding != "" ~}
+  encoding: "${file.encoding}"
+%{ endif ~}
+%{ if file.binary ~}
+  content: !!binary |
+    ${indent(4, file.content)}
+%{ else ~}
+  content: |
+    ${indent(4, file.content)}
+%{ endif ~}
+%{ endfor ~}
+
+%{ if length(boot-commands) > 0 ~}
 bootcmd:
+%{ endif ~}
 %{ for b in boot-commands ~}
 - |
   ${b}

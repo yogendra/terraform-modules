@@ -6,7 +6,11 @@ variable "app-name" {
   type = string
   description = "Application Name"
 }
-
+variable "arch" {
+  type = string
+  description = "Processor"
+  default = "amd64"
+}
 variable "startup-commands"{
   type = list(string)
   description = "Start up commands to be executed when machine is created"
@@ -54,6 +58,20 @@ variable "aws-keypair-name" {
 variable "aws-instance-profile" {
   type = string
   description = "AWS Instance Profile"
+}
+variable "files"{
+  type = list(object({
+    path = string
+    binary = optional(bool, false)
+    owner = optional(string, "root:root")
+    permissions = optional(string, "0644")
+    encoding = optional(string,"")
+    content = string
+    defer = optional(bool, false)
+    append = optional(bool, false)
+  }))
+  description = "Files (and content) to create on the app VM"
+  default = []
 }
 
 variable "aws-ami" {
