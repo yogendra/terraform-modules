@@ -67,7 +67,25 @@ variable "yba-superadmin-password" {
   description = "YBA Super Admin User"
   default     = "Password#123"
 }
-
+variable "yba-ctl-yaml" {
+  type        = string
+  description = "/opt/yba-ctl/yba-ctl.yaml"
+  default     = ""
+}
+variable "files"{
+  type = list(object({
+    path = string
+    binary = optional(bool, false)
+    owner = optional(string, "root:root")
+    permissions = optional(string, "0644")
+    encoding = optional(string,"")
+    content = string
+    defer = optional(bool, false)
+    append = optional(bool, false)
+  }))
+  description = "Files (and content) to create on the YBA VM"
+  default = []
+}
 variable "yba-environment-type" {
   type        = string
   description = "YBA Environment Type (demo, dev, stage, prod)"
