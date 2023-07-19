@@ -61,4 +61,18 @@ variable "aws-ami" {
   default = ""
 }
 
+variable "files"{
+  type = list(object({
+    path = string
+    binary = optional(bool, false)
+    owner = optional(string, "root:root")
+    permissions = optional(string, "0644")
+    encoding = optional(string,"")
+    content = string
+    defer = optional(bool, false)
+    append = optional(bool, false)
+  }))
+  description = "Files (and content) to create on the app VM"
+  default = []
+}
 

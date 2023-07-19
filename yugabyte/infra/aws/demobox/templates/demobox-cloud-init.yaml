@@ -75,9 +75,39 @@ write_files:
       Test
       Test
       Test
+- path: /root/.local/share/code-server/User/settings.json
+  defer: true
+  owner: root:root
+  permission: '0611'
+  content: |
+    {
+      "workbench.startupEditor": "none",
+      "terminal.integrated.shellIntegration.suggestEnabled": true,
+      "terminal.integrated.sendKeybindingsToShell": true,
+      "terminal.integrated.defaultProfile.linux": "bash",
+      "docker.commands.attach": "$${containerCommand} exec -it $${containerId} $${shellCommand}",
+      "workbench.colorTheme": "Visual Studio Dark"
+    }
 - path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
   content: |
     net.ipv4.conf.all.forwarding=1
+%{ for file in write-files ~}
+- path: ${file.path}
+  defer: ${file.defer}
+  append: ${file.append}
+  permissions: "${file.permissions}"
+  owner: "${file.owner}"
+%{ if file.encoding != "" ~}
+  encoding: "${file.encoding}"
+%{ endif ~}
+%{ if file.binary ~}
+  content: !!binary |
+    ${indent(4, file.content)}
+%{ else ~}
+  content: |
+    ${indent(4, file.content)}
+%{ endif ~}
+%{ endfor ~}
 packages:
 - unattended-upgrades
 - apt-transport-https
@@ -100,20 +130,21 @@ packages:
 - awscli
 - fzf
 bootcmd:
-- aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
+- aws s3 sync ${asset-bucket-location}/certs/ /root/certs/
 runcmd:
 - mkdir /root/certs
 - openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /root/certs/server-key.pem -out /root/certs/server-cert.pem -subj /C=SG/ST=SG/L=SG/O=yugabytedb/CN=demo
 - openssl pkcs12 -export -in /root/certs/server-cert.pem -inkey /root/certs/server-key.pem -out /root/certs/server-cert.p12 -password pass:changeit -name server-key
+- aws s3 sync ${asset-bucket-location}/certs/ /root/certs/
 - git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-- aws s3 cp -R ${asset-bucket-location}/certs/* /root/certs/
 - curl -fsSL https://code-server.dev/install.sh | HOME=/root bash
 - systemctl enable --now code-server@root
 - code-server --install-extension ms-toolsai.vscode-jupyter-slideshow
 - code-server --install-extension ms-toolsai.jupyter
-- code-server --install-extension mtxr.sqltools
-- code-server --install-extension mtxr.sqltools-driver-pg
+- code-server --install-extension cweijan.vscode-postgresql-client2
 - code-server --install-extension ms-azuretools.vscode-docker
+- code-server --install-extension ms-kubernetes-tools.vscode-kubernetes-
+- code-server --install-extension hashicorp.terraform
 - code-server --install-extension ms-python.python
 - curl -sSL https://github.com/YugabyteDB-Samples/yb-workload-simulator/releases/download/v0.0.6/yb-workload-sim-0.0.6.jar -o /root/yb-workload-sim-0.0.6.jar
 - curl -sSL https://github.com/yugabyte/yb-sample-apps/releases/download/v1.4.1/yb-sample-apps.jar -o /root/yb-sample-apps.jar

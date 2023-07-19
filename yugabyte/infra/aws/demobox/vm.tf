@@ -27,6 +27,7 @@ data "cloudinit_config" "ci" {
       asset-bucket-location = "s3://${var.aws-asset-bucket}/${var.asset-bucket-location}"
       password = var.password
       public-key = data.aws_key_pair.keypair.public_key
+      write-files = var.files
     })
   }
 }
@@ -60,7 +61,10 @@ data "aws_key_pair" "keypair" {
 
 resource "aws_eip" "vm-ip" {
   domain = "vpc"
-  instance = aws_instance.vm.id
+}
+resource "aws_eip_association" "vm-ip" {
+  instance_id = aws_instance.vm.id
+  allocation_id = aws_eip.vm-ip.id
 }
 data "aws_route53_zone" "dns-zone" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
