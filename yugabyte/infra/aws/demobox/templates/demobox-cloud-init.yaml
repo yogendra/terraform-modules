@@ -114,6 +114,8 @@ packages:
 - ca-certificates
 - containerd.io
 - curl
+- tmux
+- neovim
 - direnv
 - git
 - golang-go
