@@ -1,0 +1,85 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+resize_rootfs: true
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    kubernetes.list:
+      source: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+      keyid: A362B822F6DEDC652817EA46B53DC80D13EDEF05
+groups:
+  - docker
+
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups:
+  - users
+  - docker
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+  - ${public-key}
+system_info:
+  default_user:
+    groups: [docker]
+write_files:
+- path: /root/.tmux.conf
+  defer: true
+  owner: root:root
+  permission: '0611'
+  content: |
+    set -g @plugin 'tmux-plugins/tpm'
+    set -g @plugin 'tmux-plugins/tmux-sensible'
+
+    run '~/.tmux/plugins/tpm/tpm'
+%{ for file in write-files ~}
+- path: ${file.path}
+  defer: ${file.defer}
+  append: ${file.append}
+  permissions: "${file.permissions}"
+  owner: "${file.owner}"
+%{ if file.encoding != "" ~}
+  encoding: "${file.encoding}"
+%{ endif ~}
+%{ if file.binary ~}
+  content: !!binary |
+    ${indent(4, file.content)}
+%{ else ~}
+  content: |
+    ${indent(4, file.content)}
+%{ endif ~}
+%{ endfor ~}
+packages:
+- apt-transport-https
+- awscli
+- kubectl
+- ca-certificates
+- containerd.io
+- curl
+- direnv
+- docker-ce
+- docker-ce-cli
+- docker-compose
+- fzf
+- git
+- gnupg
+- gnupg-agent
+- jq
+- neovim
+- net-tools
+- python-is-python3
+- software-properties-common
+- tmux
+- unattended-upgrades
+runcmd:
+- curl -sSL https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz | tar -C /usr/local/bin -xzvf- k9s
+- curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+- git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+- curl -sS https://starship.rs/install.sh | sh -s -- -f
+- echo "eval \"\$(starship init bash)\"" >> /root/.bashrc
+- echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >> /root/.bashrc
