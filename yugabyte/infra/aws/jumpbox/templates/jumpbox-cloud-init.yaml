@@ -12,10 +12,11 @@ apt:
 groups:
   - docker
 
+ssh_authorized_keys:
+- ${public-key}
+
 users:
 - default
-  ssh_authorized_keys:
-  - ${public-key}
 system_info:
   default_user:
     groups: [docker]
@@ -77,5 +78,7 @@ runcmd:
 - curl -sS https://starship.rs/install.sh | sh -s -- -f
 - echo "eval \"\$(starship init bash)\"" >> /root/.bashrc
 - echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >> /root/.bashrc
+- echo "eval \"\$(direnv hook bash)\"" >> /root/.bashrc
 - echo "eval \"\$(starship init bash)\"" >> /home/ubuntu/.bashrc
 - echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >>/home/ubuntu/.bashrc
+- echo "eval \"\$(direnv hook bash)\"" >>/home/ubuntu/.bashrc
