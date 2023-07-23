@@ -14,14 +14,6 @@ groups:
 
 users:
 - default
-- name: yugabyte
-  gecos: YugabyteDB Admin
-  groups:
-  - users
-  - docker
-  sudo: ALL=(ALL) NOPASSWD:ALL
-  shell: /bin/bash
-  lock_passwd: true
   ssh_authorized_keys:
   - ${public-key}
 system_info:
@@ -79,7 +71,11 @@ packages:
 runcmd:
 - curl -sSL https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz | tar -C /usr/local/bin -xzvf- k9s
 - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-- git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+- git clone https://github.com/tmux-plugins/tpm /root/.tmux/plugins/tpm
+- cp -r --no-preserv=ownership .tmux /home/ubuntu/
+- install -o ubuntu -g ubuntu -m 0600 /root/.tmux.conf /home/ubuntu/.tmux.conf
 - curl -sS https://starship.rs/install.sh | sh -s -- -f
 - echo "eval \"\$(starship init bash)\"" >> /root/.bashrc
 - echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >> /root/.bashrc
+- echo "eval \"\$(starship init bash)\"" >> /home/ubuntu/.bashrc
+- echo "source /usr/share/doc/fzf/examples/key-bindings.bash" >>/home/ubuntu/.bashrc

@@ -2,16 +2,6 @@ variable "prefix" {
   type = string
   description = "Prefix for resources"
 }
-variable "asset-bucket-location" {
-  type = string
-  description = "Asset location inside the bucket"
-  default = "assets"
-}
-variable "password" {
-  type = string
-  description = "Password for resources"
-  default = "Password#123"
-}
 variable "hostname" {
   type = string
   description = "Hostname for app VM. If not given, it is generated automatically based on hosted zone, prefix and app name"
@@ -22,10 +12,6 @@ variable "tags"{
   type = map(string)
   description = "Tags to put on the machines"
   default = {}
-}
-variable "aws-asset-bucket" {
-  type = string
-  description = "Asset bucket name"
 }
 variable "aws-machine-type" {
   type = string
@@ -61,6 +47,11 @@ variable "aws-ami" {
   default = ""
 }
 
+variable "assign-public-ip" {
+  type = bool
+  description = "Wheter to assign public-ip or not"
+  default = true
+}
 variable "files"{
   type = list(object({
     path = string

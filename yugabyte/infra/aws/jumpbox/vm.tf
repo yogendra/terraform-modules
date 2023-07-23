@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
 }
 locals {
   ami-id = length(var.aws-ami) == 0? data.aws_ami.ubuntu[0].id : var.aws-ami
-  hostname = length(var.hostname) > 0? var.hostname: replace(lower("demo-${var.prefix}"), "/[^0-9A-Za-z]/","-")
+  hostname = length(var.hostname) > 0? var.hostname: replace(lower("jb-${var.prefix}"), "/[^0-9A-Za-z]/","-")
 }
 data "cloudinit_config" "ci" {
   gzip          = true
@@ -24,7 +24,6 @@ data "cloudinit_config" "ci" {
   part {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/jumpbox-cloud-init.yaml", {
-      asset-bucket-location = "s3://${var.aws-asset-bucket}/${var.asset-bucket-location}"
       public-key = data.aws_key_pair.keypair.public_key
       write-files = var.files
     })
@@ -46,7 +45,7 @@ resource "aws_instance" "vm" {
   }
   user_data_base64 = data.cloudinit_config.ci.rendered
   tags = merge(var.tags, {
-    Name = "${var.prefix}-demobox"
+    Name = "${var.prefix}-jb"
   })
   lifecycle {
     ignore_changes = [ ami ]
@@ -59,11 +58,16 @@ data "aws_key_pair" "keypair" {
 }
 
 resource "aws_eip" "vm-ip" {
+  count = var.assign-public-ip ? 1: 0
   domain = "vpc"
 }
 resource "aws_eip_association" "vm-ip" {
+  count = var.assign-public-ip ? 1: 0
   instance_id = aws_instance.vm.id
-  allocation_id = aws_eip.vm-ip.id
+  allocation_id = aws_eip.vm-ip[0].id
+}
+locals {
+  vm-ip = var.assign-public-ip ? aws_eip.vm-ip[0].public_ip : aws_instance.vm.private_ip
 }
 data "aws_route53_zone" "dns-zone" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
@@ -77,13 +81,13 @@ resource "aws_route53_record" "vm-dns" {
   name    = "${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
   type    = "A"
   ttl     = "300"
-  records = [aws_eip.vm-ip.public_ip]
+  records = [ local.vm-ip ]
 }
 resource "aws_route53_record" "star-vm-dns" {
   count = length(var.aws-hosted-zone-name) > 0 ? 1:0
   zone_id = data.aws_route53_zone.dns-zone[0].zone_id
   name    = "*.${local.hostname}.${data.aws_route53_zone.dns-zone[0].name}"
-  type    = "A"
+  type    = "CNAME"
   ttl     = "300"
-  records = [aws_eip.vm-ip.public_ip]
+  records = [aws_route53_record.vm-dns[0].name]
 }
