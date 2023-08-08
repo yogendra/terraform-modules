@@ -80,3 +80,9 @@ variable "aws-ami" {
   description = "AWS Machine image for vm"
   default = ""
 }
+
+variable "run-build" {
+  type = bool
+  description = "Run checkout and build"
+  default = true
+}

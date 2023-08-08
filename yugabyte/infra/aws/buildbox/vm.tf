@@ -35,6 +35,7 @@ data "cloudinit_config" "ci" {
       write-files = var.files
       public-key = data.aws_key_pair.keypair.public_key
       arch = var.arch
+      run-build = var.run-build
     })
   }
 }
