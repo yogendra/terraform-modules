@@ -196,7 +196,7 @@ runcmd:
 - |
   sudo -i -u yugabyte -- bash -c "mkdir -p ~/.ssh ;
     ssh-keyscan github.com >> ~/.ssh/knows_hosts ;
-    git clone git@github.com:yugabyte/yugabyte-db.git /home/yugabyte/yugabyte-db ;
+    git clone https://github.com/yugabyte/yugabyte-db.git /home/yugabyte/yugabyte-db ;
     cd yugabyte-db ;
     ./yb_build.sh release
   "
