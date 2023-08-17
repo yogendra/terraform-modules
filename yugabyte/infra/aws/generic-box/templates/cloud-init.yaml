@@ -1,0 +1,87 @@
+#cloud-config
+timezone: 'Asia/Singapore'
+resize_rootfs: true
+users:
+- default
+- name: yugabyte
+  gecos: YugabyteDB Admin
+  groups:
+  - users
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  shell: /bin/bash
+  lock_passwd: true
+  ssh_authorized_keys:
+  - ${public-key}
+%{ if length(packages) > 0 ~}
+packages:
+%{ endif ~}
+%{ for p in packages ~}
+- ${p}
+%{ endfor ~}
+%{ if length(write-files) > 0 ~}
+write_files:
+%{ endif ~}
+%{ for file in write-files ~}
+- path: ${file.path}
+  defer: ${file.defer}
+  append: ${file.append}
+  permissions: "${file.permissions}"
+  owner: "${file.owner}"
+%{ if file.encoding != "" ~}
+  encoding: "${file.encoding}"
+%{ endif ~}
+%{ if file.binary ~}
+  content: !!binary |
+    ${indent(4, file.content)}
+%{ else ~}
+  content: |
+    ${indent(4, file.content)}
+%{ endif ~}
+%{ endfor ~}
+%{ if length(boot-commands) > 0 ~}
+bootcmd:
+%{ endif ~}
+%{ for b in boot-commands ~}
+- |
+  ${b}
+%{ endfor ~}
+runcmd:
+- echo "create mount paths"
+%{ for s in range(disk-count) ~}
+- mkdir -p /mnt/disk-${s}
+- chown yugabyte:yugabyte /mnt/disk-${s}
+%{ endfor ~}
+%{ for s in startup-commands ~}
+- |
+  ${s}
+%{ endfor ~}
+
+
+%{ if disk-count > 0 ~}
+mounts:
+%{ endif ~}
+%{ for s in range(disk-count) ~}
+- [ "LABEL=disk-${s}", /mnt/disk-${s}, "auto", "defaults,nofail", "0", "0" ]
+%{ endfor ~}
+
+mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
+
+%{ if disk-count > 0 ~}
+disk_setup:
+%{ endif ~}
+%{ for s in range(disk-count) ~}
+  /dev/nvme${s}n1:
+    table_type: 'mbr'
+    layout: 'auto'
+    overwrite: False
+%{ endfor ~}
+
+%{ if disk-count > 0 ~}
+fs_setup:
+%{ endif ~}
+%{ for s in range(disk-count) ~}
+  - label: disk-${s}
+    filesystem: 'xfs'
+    device: '/dev/nvme${s}n1'
+    overwrite: false
+%{ endfor ~}
