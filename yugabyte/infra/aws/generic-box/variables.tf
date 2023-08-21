@@ -5,7 +5,6 @@ variable "prefix" {
 variable "name" {
   type        = string
   description = "Name"
-  default     = ""
 }
 variable "arch" {
   type        = string
@@ -45,22 +44,23 @@ variable "aws-machine-type" {
 variable "aws-security-group-ids" {
   type        = list(string)
   description = "AWS Security Groups"
-  default     = ["default"]
 }
 variable "assign-public-ip" {
   type        = bool
   description = "Whether to assign public IP or not"
   default     = false
 }
-variable "aws-public-hosted-zone-name" {
+
+variable "aws-public-hosted-zone-id" {
   type        = string
-  description = "AWS Public Hosted Zone Name"
-  default     = ""
+  description = "AWS Public Hosted Zone ID"
+  default     = null
 }
-variable "aws-private-hosted-zone-name" {
+
+variable "aws-private-hosted-zone-id" {
   type        = string
-  description = "AWS Privated Hosted Zone Name"
-  default     = ""
+  description = "AWS Privated Hosted Zone ID"
+  default     = null
 }
 
 variable "aws-subnet-id" {
@@ -74,16 +74,17 @@ variable "aws-keypair-name" {
 variable "aws-instance-profile" {
   type        = string
   description = "AWS Instance Profile"
+  default = null
 }
 variable "disk-size-gb" {
   type        = number
   description = "AWS disk size in gb"
-  default = 10
+  default = 0
 }
 variable "disk-count" {
   type        = number
   description = "AWS disk count"
-  default = 2
+  default = 0
 }
 variable "files" {
   type = list(object({
