@@ -5,6 +5,7 @@ locals{
     yb-env = var.prefix
 
   })
+
 }
 data "aws_ami" "ami" {
   count       = length(var.aws-ami) == 0 ? 1 : 0
@@ -18,6 +19,10 @@ data "aws_ami" "ami" {
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
+  }
+  filter {
+    name = "architecture"
+    values = [var.arch]
   }
 
   owners = ["679593333241"] # Marketplace
@@ -107,10 +112,7 @@ resource "aws_route53_record" "star-vm-public-dns" {
   type    = "A"
   ttl     = "30"
   records = [aws_eip.vm-public-ip[0].public_ip]
-  # tags = merge(local.tags , {
-  #   resource-type = "route53"
-  #   resource-subtype = "record"
-  # })
+
 }
 
 locals{
@@ -137,7 +139,7 @@ data "cloudinit_config" "ci" {
   part {
     content_type = "text/cloud-config"
     content = templatefile("${path.module}/templates/cloud-init.yaml", {
-      arch             = var.arch
+      # arch             = var.arch
       boot-commands    = var.boot-commands
       packages         = var.packages
       public-key       = data.aws_key_pair.keypair.public_key
@@ -146,6 +148,7 @@ data "cloudinit_config" "ci" {
       disk-count       = var.disk-count
       internal-address = local.internal-address
       external-address = local.external-address
+      cloud-init-extras = var.cloud-init-extras
     })
   }
 }
@@ -154,7 +157,7 @@ data "cloudinit_config" "ci" {
 resource "aws_instance" "vm" {
   ami                    = local.ami-id
   instance_type          = var.aws-machine-type
-  vpc_security_group_ids = var.aws-security-group-ids
+  # vpc_security_group_ids = var.aws-security-group-ids
   # subnet_id              = var.aws-subnet-id
   iam_instance_profile   = var.aws-instance-profile
   key_name               = var.aws-keypair-name

@@ -9,7 +9,7 @@ variable "name" {
 variable "arch" {
   type        = string
   description = "Processor"
-  default     = "amd64"
+  default     = "x86_64"
 }
 variable "packages" {
   type        = list(string)
@@ -85,6 +85,11 @@ variable "disk-count" {
   type        = number
   description = "AWS disk count"
   default = 0
+}
+variable "cloud-init-extras" {
+  type = string
+  description = "Cloud Init Extras"
+  default = ""
 }
 variable "files" {
   type = list(object({

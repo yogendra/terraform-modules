@@ -46,10 +46,11 @@ bootcmd:
   ${b}
 %{ endfor ~}
 runcmd:
+- chown -R yugabyte:yugabyte  /home/yugabyte
 - echo "create mount paths"
 %{ for s in range(disk-count) ~}
-- mkdir -p /mnt/disk-${s}
-- chown yugabyte:yugabyte /mnt/disk-${s}
+- mkdir -p /home/yugabyte/yugabyte-db/data/disk${s}
+- chown -R yugabyte:yugabyte  /home/yugabyte/yugabyte-db
 %{ endfor ~}
 %{ for s in startup-commands ~}
 - |
@@ -61,7 +62,7 @@ runcmd:
 mounts:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-- [ "LABEL=disk-${s}", /mnt/disk-${s}, "auto", "defaults,nofail", "0", "0" ]
+- [ "LABEL=disk-${s}", /home/yugabyte/yugabyte-db/data/disk${s}, "auto", "defaults,nofail", "0", "0" ]
 %{ endfor ~}
 
 mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
@@ -70,7 +71,7 @@ mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
 disk_setup:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-  /dev/nvme${s}n1:
+  /dev/nvme${s+1}n1:
     table_type: 'mbr'
     layout: 'auto'
     overwrite: False
@@ -80,8 +81,9 @@ disk_setup:
 fs_setup:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-  - label: disk-${s}
-    filesystem: 'xfs'
-    device: '/dev/nvme${s}n1'
-    overwrite: false
+- label: disk-${s}
+  filesystem: 'xfs'
+  device: '/dev/nvme${s+1}n1'
+  overwrite: false
 %{ endfor ~}
+${cloud-init-extras}
