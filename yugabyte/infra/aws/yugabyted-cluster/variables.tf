@@ -37,11 +37,26 @@ variable "disk-count" {
   description = "No. of Disks"
   default     = 1
 }
-
 variable "disk-size-gb" {
   type        = number
   description = "Each Data Disk Size in GB"
   default     = 10
+}
+
+variable "disk-iops" {
+  type        = number
+  description = "AWS disk iops"
+  default = 3000
+}
+variable "disk-type" {
+  type        = string
+  description = "AWS disk type"
+  default = "gp3"
+}
+variable "disk-throughput" {
+  type        = number
+  description = "AWS disk throughput"
+  default = 125
 }
 
 variable "aws-machine-type" {

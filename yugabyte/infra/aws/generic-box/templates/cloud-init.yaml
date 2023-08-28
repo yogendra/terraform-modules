@@ -62,7 +62,7 @@ runcmd:
 mounts:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-- [ "LABEL=disk-${s}", /home/yugabyte/yugabyte-db/data/disk${s}, "auto", "defaults,nofail", "0", "0" ]
+- [ "LABEL=d${s}", /mnt/d${s}, "auto", "defaults,nofail", "0", "0" ]
 %{ endfor ~}
 
 mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
@@ -81,7 +81,7 @@ disk_setup:
 fs_setup:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-- label: disk-${s}
+- label: d${s}
   filesystem: 'xfs'
   device: '/dev/nvme${s+1}n1'
   overwrite: false

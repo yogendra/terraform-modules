@@ -22,6 +22,9 @@ variable "config" {
     cloud-init-extras          = optional(string, "")
     disk-count                 = optional(number, 1)
     disk-size-gb               = optional(number, 10)
+    disk-iops               = optional(number, 3000)
+    disk-throughput               = optional(number, 125)
+    disk-type          = optional(string, "gp3")
     files                      = optional(list(object({
       path        = string
       binary      = optional(bool, false)
@@ -50,8 +53,8 @@ module "node" {
   assign-public-ip           = var.config.assign-public-ip
   aws-ami                    = var.config.aws-ami
   aws-instance-profile       = var.config.aws-instance-profile
-  aws-machine-type           = var.config.aws-machine-type
   aws-keypair-name           = var.config.aws-keypair-name
+  aws-machine-type           = var.config.aws-machine-type
   aws-private-hosted-zone-id = var.config.aws-private-hosted-zone-id
   aws-public-hosted-zone-id  = var.config.aws-public-hosted-zone-id
   aws-security-group-ids     = var.config.aws-security-group-ids
@@ -59,14 +62,17 @@ module "node" {
   boot-commands              = var.config.boot-commands
   cloud-init-extras          = var.config.cloud-init-extras
   disk-count                 = var.config.disk-count
+  disk-iops                  = var.config.disk-iops
   disk-size-gb               = var.config.disk-size-gb
+  disk-throughput            = var.config.disk-throughput
+  disk-type                  = var.config.disk-type
   files                      = var.config.files
   hostname                   = var.config.hostname
   name                       = var.config.cluster-name
+  packages                   = var.config.packages
   prefix                     = var.config.prefix
   startup-commands           = var.config.startup-commands
   tags                       = var.config.tags
-  packages                   = var.config.packages
 }
 output "node" {
   value = { config = var.config, node = module.node }

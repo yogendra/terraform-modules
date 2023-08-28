@@ -38,16 +38,21 @@ locals {
           arch                       = var.arch
           aws-instance-profile       = var.aws-instance-profile
           aws-keypair-name           = topology.keypair-name
+          aws-machine-type           = var.aws-machine-type
           aws-private-hosted-zone-id = var.aws-private-hosted-zone-id
           aws-public-hosted-zone-id  = var.aws-public-hosted-zone-id
           aws-security-group-ids     = topology.security-group-ids
           aws-subnet-id              = topology.subnet-id
-          aws-machine-type           = var.aws-machine-type
           boot-commands              = local.boot-commands
+          cluster-name               = "${var.name}"
+          disk-count                 = var.disk-count
+          disk-iops                  = var.disk-iops
+          disk-size-gb               = var.disk-size-gb
+          disk-throughput            = var.disk-throughput
+          disk-type                  = var.disk-type
           files                      = local.files
           hostname                   = "${var.name}-${topology.region}-${inode}"
           master-gflags              = var.master-gflags
-          cluster-name               = "${var.name}"
           packages                   = local.packages
           prefix                     = "ybdb"
           rf                         = var.rf
@@ -67,7 +72,7 @@ locals {
       )
     ]
   ])
-  
+
   node-config = [
     for idx, node in local.nodes : merge(node, {
       node-index = idx

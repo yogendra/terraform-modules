@@ -124,6 +124,9 @@ resource "aws_ebs_volume" "volume" {
   count = var.disk-count
 // Here , We need to give same AZ as the INstance Have.
   availability_zone = data.aws_subnet.subnet.availability_zone
+  throughput = var.disk-throughput
+  iops = var.disk-iops
+  type = var.disk-type
 // Size IN GiB
   size = var.disk-size-gb
   tags = merge(local.tags , {

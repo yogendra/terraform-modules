@@ -76,6 +76,22 @@ variable "aws-instance-profile" {
   description = "AWS Instance Profile"
   default = null
 }
+variable "disk-iops" {
+  type        = number
+  description = "AWS disk iops"
+  default = 3000
+}
+variable "disk-type" {
+  type        = string
+  description = "AWS disk type"
+  default = "gp3"
+}
+variable "disk-throughput" {
+  type        = number
+  description = "AWS disk throughput"
+  default = 125
+}
+
 variable "disk-size-gb" {
   type        = number
   description = "AWS disk size in gb"
