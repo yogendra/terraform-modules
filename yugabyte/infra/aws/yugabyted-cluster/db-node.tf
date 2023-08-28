@@ -253,3 +253,8 @@ locals{
 output "db-nodes" {
   value = local.db-nodes
 }
+
+output "db-nodes-by-region" {
+  value = local.db-nodes-by-region
+}
+

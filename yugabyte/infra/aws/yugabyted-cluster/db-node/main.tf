@@ -75,5 +75,5 @@ module "node" {
   tags                       = var.config.tags
 }
 output "node" {
-  value = { config = var.config, node = module.node }
+  value =module.node
 }
