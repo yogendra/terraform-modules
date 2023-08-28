@@ -22,7 +22,10 @@ locals {
     },
   ]
   startup-commands = [
-    "sudo -u yugabyte /home/yugabyte/bin/install_software.sh ${local.yb_version}"
+    "sudo -u yugabyte /home/yugabyte/bin/install_software.sh ${local.yb_version}",
+    "echo 2147483648 > /proc/sys/kernel/shmmax",
+    "sysctl -w kernel.shmmax=2147483648",
+    "echo kernel.shmmax = 2147483648 >> /etc/sysctl.conf"
   ]
   boot-commands = []
 
