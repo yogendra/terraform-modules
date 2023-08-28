@@ -79,7 +79,11 @@ locals {
   node-config = [
     for idx, node in local.nodes : merge(node, {
       node-index = idx
-      node-name  = "${var.name}-${idx}",
+      node-name  = "${var.name}-${node.region}-n${idx}"
+      hostname  = "${var.name}-${node.region}-n${idx}"
+      tags = merge(node.tags , {
+        Name = "${var.name}-${node.region}-n${idx}"
+      })
     })
   ]
   # first-node = node-config[0]
