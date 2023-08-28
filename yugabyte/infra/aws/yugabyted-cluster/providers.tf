@@ -78,13 +78,13 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias = "ap_southeast_4"
-  region = "ap-southeast-4"
-  default_tags {
-    tags = var.tags
-  }
-}
+# provider "aws" {
+#   alias = "ap_southeast_4"
+#   region = "ap-southeast-4"
+#   default_tags {
+#     tags = var.tags
+#   }
+# }
 
 provider "aws" {
   alias = "ca_central_1"
@@ -102,13 +102,13 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias = "eu_central_2"
-  region = "eu-central-2"
-  default_tags {
-    tags = var.tags
-  }
-}
+# provider "aws" {
+#   alias = "eu_central_2"
+#   region = "eu-central-2"
+#   default_tags {
+#     tags = var.tags
+#   }
+# }
 
 provider "aws" {
   alias = "eu_north_1"
@@ -126,13 +126,13 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias = "eu_south_2"
-  region = "eu-south-2"
-  default_tags {
-    tags = var.tags
-  }
-}
+# provider "aws" {
+#   alias = "eu_south_2"
+#   region = "eu-south-2"
+#   default_tags {
+#     tags = var.tags
+#   }
+# }
 
 provider "aws" {
   alias = "eu_west_1"
@@ -158,13 +158,13 @@ provider "aws" {
   }
 }
 
-provider "aws" {
-  alias = "me_central_1"
-  region = "me-central-1"
-  default_tags {
-    tags = var.tags
-  }
-}
+# provider "aws" {
+#   alias = "me_central_1"
+#   region = "me-central-1"
+#   default_tags {
+#     tags = var.tags
+#   }
+# }
 
 provider "aws" {
   alias = "me_south_1"

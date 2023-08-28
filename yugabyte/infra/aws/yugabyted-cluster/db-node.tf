@@ -79,14 +79,14 @@ module "db-node-ap-southeast-3" {
     aws = aws.ap_southeast_3
   }
 }
-module "db-node-ap-southeast-4" {
-  count = length(lookup(local.node-by-region, "ap-southeast-4",[]))
-  source = "./db-node"
-  config = local.node-by-region["ap-southeast-4"][count.index]
-  providers = {
-    aws = aws.ap_southeast_4
-  }
-}
+# module "db-node-ap-southeast-4" {
+#   count = length(lookup(local.node-by-region, "ap-southeast-4",[]))
+#   source = "./db-node"
+#   config = local.node-by-region["ap-southeast-4"][count.index]
+#   providers = {
+#     aws = aws.ap_southeast_4
+#   }
+# }
 module "db-node-ca-central-1" {
   count = length(lookup(local.node-by-region, "ca-central-1",[]))
   source = "./db-node"
@@ -103,14 +103,14 @@ module "db-node-eu-central-1" {
     aws = aws.eu_central_1
   }
 }
-module "db-node-eu-central-2" {
-  count = length(lookup(local.node-by-region, "eu-central-2",[]))
-  source = "./db-node"
-  config = local.node-by-region["eu-central-2"][count.index]
-  providers = {
-    aws = aws.eu_central_2
-  }
-}
+# module "db-node-eu-central-2" {
+#   count = length(lookup(local.node-by-region, "eu-central-2",[]))
+#   source = "./db-node"
+#   config = local.node-by-region["eu-central-2"][count.index]
+#   providers = {
+#     aws = aws.eu_central_2
+#   }
+# }
 module "db-node-eu-north-1" {
   count = length(lookup(local.node-by-region, "eu-north-1",[]))
   source = "./db-node"
@@ -127,14 +127,14 @@ module "db-node-eu-south-1" {
     aws = aws.eu_south_1
   }
 }
-module "db-node-eu-south-2" {
-  count = length(lookup(local.node-by-region, "eu-south-2",[]))
-  source = "./db-node"
-  config = local.node-by-region["eu-south-2"][count.index]
-  providers = {
-    aws = aws.eu_south_2
-  }
-}
+# module "db-node-eu-south-2" {
+#   count = length(lookup(local.node-by-region, "eu-south-2",[]))
+#   source = "./db-node"
+#   config = local.node-by-region["eu-south-2"][count.index]
+#   providers = {
+#     aws = aws.eu_south_2
+#   }
+# }
 module "db-node-eu-west-1" {
   count = length(lookup(local.node-by-region, "eu-west-1",[]))
   source = "./db-node"
@@ -159,14 +159,14 @@ module "db-node-eu-west-3" {
     aws = aws.eu_west_3
   }
 }
-module "db-node-me-central-1" {
-  count = length(lookup(local.node-by-region, "me-central-1",[]))
-  source = "./db-node"
-  config = local.node-by-region["me-central-1"][count.index]
-  providers = {
-    aws = aws.me_central_1
-  }
-}
+# module "db-node-me-central-1" {
+#   count = length(lookup(local.node-by-region, "me-central-1",[]))
+#   source = "./db-node"
+#   config = local.node-by-region["me-central-1"][count.index]
+#   providers = {
+#     aws = aws.me_central_1
+#   }
+# }
 module "db-node-me-south-1" {
   count = length(lookup(local.node-by-region, "me-south-1",[]))
   source = "./db-node"
@@ -228,17 +228,17 @@ locals{
     ap-southeast-1 = module.db-node-ap-southeast-1[*]
     ap-southeast-2 = module.db-node-ap-southeast-2[*]
     ap-southeast-3 = module.db-node-ap-southeast-3[*]
-    ap-southeast-4 = module.db-node-ap-southeast-4[*]
+    # ap-southeast-4 = module.db-node-ap-southeast-4[*]
     ca-central-1 = module.db-node-ca-central-1[*]
     eu-central-1 = module.db-node-eu-central-1[*]
-    eu-central-2 = module.db-node-eu-central-2[*]
+    # eu-central-2 = module.db-node-eu-central-2[*]
     eu-north-1 = module.db-node-eu-north-1[*]
     eu-south-1 = module.db-node-eu-south-1[*]
-    eu-south-2 = module.db-node-eu-south-2[*]
+    # eu-south-2 = module.db-node-eu-south-2[*]
     eu-west-1 = module.db-node-eu-west-1[*]
     eu-west-2 = module.db-node-eu-west-2[*]
     eu-west-3 = module.db-node-eu-west-3[*]
-    me-central-1 = module.db-node-me-central-1[*]
+    # me-central-1 = module.db-node-me-central-1[*]
     me-south-1 = module.db-node-me-south-1[*]
     sa-east-1 = module.db-node-sa-east-1[*]
     us-east-1 = module.db-node-us-east-1[*]
