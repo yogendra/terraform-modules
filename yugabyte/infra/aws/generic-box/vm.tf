@@ -175,7 +175,7 @@ resource "aws_instance" "vm" {
   user_data_base64 = data.cloudinit_config.ci.rendered
 
   tags = merge(local.tags , {
-    Name = "${var.prefix}-${var.name}"
+    Name = local.hostname
     resource-type = "ec2"
     resource-subtype = "ec2"
   })
