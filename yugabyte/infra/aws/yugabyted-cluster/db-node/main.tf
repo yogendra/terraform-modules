@@ -8,7 +8,7 @@ terraform {
 data "aws_region" "current" {}
 variable "config" {
   type = object({
-    arch                       = string
+    arch                       = optional(string, "x86_64")
     assign-public-ip           = optional(bool, false)
     aws-ami                    = optional(string, "")
     aws-instance-profile       = optional(string, null)
