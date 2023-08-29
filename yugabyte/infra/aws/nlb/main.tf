@@ -98,7 +98,7 @@ resource "aws_lb_target_group_attachment" "this" {
 
   target_group_arn  = aws_lb_target_group.this[local.ports_target_product[count.index].portName].arn
   target_id         = local.ports_target_product[count.index].target
-  availability_zone = "all"
+  # availability_zone = "all"
   port              = local.ports_target_product[count.index].port
 }
 
