@@ -1,12 +1,12 @@
-variable "listener-ports" {
+variable "listener-port" {
   type = number
   description = "Listener port"
-  default = [5433]
+  default = 5433
 }
 variable "forward-addresses" {
   type = list(number)
-  description = "List of forward for each listner port"
-  default = null
+  description = "List of forward address (socket address)"
+
 }
 
 variable "prefix" {

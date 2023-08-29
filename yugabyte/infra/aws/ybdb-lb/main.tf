@@ -1,7 +1,7 @@
 
 
 locals {
-  nginx-config = templatefile("./templates/nginx.conf", {
+  nginx-config = templatefile("${path.module}/templates/nginx.conf", {
     listener-port     = var.listener-port
     forward-addresses = var.forward-addresses
   })
@@ -11,11 +11,11 @@ module "lb" {
 
   source                     = "../generic-box"
   arch                       = var.arch
-  hostname                   = var.hosstname
+  hostname                   = var.hostname
   aws-ami                    = var.aws-ami
   assign-public-ip           = var.assign-public-ip
   aws-instance-profile       = var.aws-instance-profile
-  aws-keypair-name           = var.keypair-name
+  aws-keypair-name           = var.aws-keypair-name
   aws-machine-type           = var.aws-machine-type
   aws-security-group-ids     = var.aws-security-group-ids
   aws-subnet-id              = var.aws-subnet-id
