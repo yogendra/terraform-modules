@@ -16,14 +16,25 @@ variable "config" {
     disk-iops                  = optional(number, 3000)
     disk-throughput            = optional(number, 125)
     disk-type                  = optional(string, "gp3")
-    hostname         = string
-    cluster-name     = string
-    prefix           = string
-    tags             = optional(map(string), {})
+    files = optional(list(object({
+      path        = string
+      binary      = optional(bool, false)
+      owner       = optional(string, "root:root")
+      permissions = optional(string, "0644")
+      encoding    = optional(string, "")
+      content     = string
+      defer       = optional(bool, false)
+      append      = optional(bool, false)
+    })), [])
+    hostname             = string
+    cluster-name         = string
+    prefix               = string
+    tags                 = optional(map(string), {})
     yugabyted-parameters = optional(map(string), {})
-    yugabyted-config = optional(string, "")
-    join-masters      = optional(list(string), [])
-
+    yugabyted-config     = optional(map(string), {})
+    join-master          = optional(string, null)
+    master-gflags        = optional(map(string), {})
+    tserver-gflags       = optional(map(string), {})
   })
 
   description = "db-node config"

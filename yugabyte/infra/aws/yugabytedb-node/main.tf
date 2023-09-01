@@ -13,7 +13,6 @@ module "db-node" {
   aws-security-group-ids     = var.config.aws-security-group-ids
   aws-subnet-id              = var.config.aws-subnet-id
   boot-commands              = local.boot-commands
-  cloud-init-extras          = var.config.cloud-init-extras
   disk-count                 = var.config.disk-count
   disk-iops                  = var.config.disk-iops
   disk-size-gb               = var.config.disk-size-gb

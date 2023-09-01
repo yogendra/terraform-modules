@@ -78,4 +78,6 @@ yb-software/yugabyte-${YB_VERSION}/bin/post_install.sh 2>&1 > /dev/null
 echo "YB_HOME=${YB_HOME}" > ${YB_HOME}/.yb_env.sh
 echo "export PATH='$PATH':${YB_HOME}/yb-software/yugabyte-${YB_VERSION}/bin:${YB_HOME}/yb-software/yugabyte-${YB_VERSION}/postgres/bin" >> ${YB_HOME}/.yb_env.sh
 echo "source ${YB_HOME}/.yb_env.sh" >> /home/${USER}/.bash_profile
+echo "source ${YB_HOME}/.yb_env.sh" >> /home/${USER}/.bashrc
+
 chmod 755 ${YB_HOME}/.yb_env.sh
