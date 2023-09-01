@@ -9,7 +9,7 @@ provider "aws" {
 }
 module "basic" {
   source = "../"
-  name = "app"
+  name = "gbtest-basic"
   prefix = "test-1"
   aws-subnet-id = "subnet-012dc148"
   aws-keypair-name = "yb-15-aws-portal-1-key"
@@ -18,7 +18,7 @@ module "basic" {
 
 module "private-dns" {
   source = "../"
-  name = "app"
+  name = "gbtest-pvt-dns"
   prefix = "test-2"
   aws-subnet-id = "subnet-012dc148"
   aws-keypair-name = "yb-15-aws-portal-1-key"
@@ -28,7 +28,7 @@ module "private-dns" {
 
 module "assign-public-ip" {
   source = "../"
-  name = "app"
+  name = "gbtest-public"
   prefix = "test-3"
   aws-subnet-id = "subnet-012dc148"
   aws-keypair-name = "yb-15-aws-portal-1-key"
@@ -39,7 +39,7 @@ module "assign-public-ip" {
 
 module "assign-public-ip-and-private-dns" {
   source = "../"
-  name = "app"
+  name = "gbtest-private-dns"
   prefix = "test-4"
   aws-subnet-id = "subnet-012dc148"
   aws-keypair-name = "yb-15-aws-portal-1-key"
@@ -50,7 +50,7 @@ module "assign-public-ip-and-private-dns" {
 
 module "assign-public-ip-and-private-dns-and-public-dns" {
   source = "../"
-  name = "app"
+  name = "gbtest-all-dns"
   prefix = "test-5"
   aws-subnet-id = "subnet-012dc148"
   aws-keypair-name = "yb-15-aws-portal-1-key"
@@ -59,6 +59,3 @@ module "assign-public-ip-and-private-dns-and-public-dns" {
   aws-public-hosted-zone-id = "Z0193529177WHQIGWKQHO"
   assign-public-ip = true
 }
-
-
-
