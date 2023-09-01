@@ -1,4 +1,4 @@
-module "db-node" {
+module "this" {
 
   source = "../generic-box"
 
