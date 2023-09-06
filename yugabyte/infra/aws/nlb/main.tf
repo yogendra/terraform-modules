@@ -25,6 +25,11 @@ variable "vpc-id"{
   type = string
   description = "vpc"
 }
+variable "stickiness-type"{
+  type = string
+  description = "NLB Stickiness Type"
+  default = ""
+}
 variable "tags" {
   type = map(string)
   description = "Tags"
@@ -44,6 +49,7 @@ locals {
       ]
     ]
   )
+  stickiness = var.stickiness-type == "" ? {} : { stickness-type = var.stickiness-type }
 
 }
 
@@ -63,10 +69,18 @@ resource "aws_lb_target_group" "this" {
   protocol    = "TCP"
   vpc_id      = var.vpc-id
   target_type = var.target-type
-  stickiness  {
-    enabled = true
-    type = "source_ip"
+
+  dynamic "stickiness"{
+    for_each = local.stickiness
+    content {
+      enabled = true
+      type = each.value
+    }
   }
+  # stickiness  {
+  #   enabled = var.stickiness-type != null? true:false
+  #   type = var.stickiness-type
+  # }
 
   depends_on = [
     aws_lb.this
