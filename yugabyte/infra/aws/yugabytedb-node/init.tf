@@ -25,6 +25,8 @@ locals {
     master-gflags  = var.config.master-gflags
     tserver-gflags = var.config.tserver-gflags
     join-master    = local.join-master
+    replication-factor = var.config.replication-factor
+    fault-tolerance = var.config.fault-tolerance
   })
   scripts = [
     {

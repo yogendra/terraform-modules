@@ -28,14 +28,30 @@ variable "config" {
     })), [])
     hostname             = string
     cluster-name         = string
-    prefix               = string
     tags                 = optional(map(string), {})
     yugabyted-parameters = optional(map(string), {})
     yugabyted-config     = optional(map(string), {})
     join-master          = optional(string, null)
+    replication-factor   = optional(number, 1)
+    fault-tolerance      = optional(string, "zone")
     master-gflags        = optional(map(string), {})
     tserver-gflags       = optional(map(string), {})
   })
 
   description = "db-node config"
+
+  validation {
+    condition     = contains(["zone", "region", "cloud"], var.config.fault-tolerance)
+    error_message = "Allowed values for  config.fault-tolerance are \"cloud\", \"region\", or \"zone\"."
+  }
+  validation {
+    condition     = contains([1,3,5,7], var.config.replication-factor)
+    error_message = "Allowed values for  config.replication-factor are 1, 3, 5 or 7"
+  }
+
+  validation {
+    condition     = contains([0,1,2,3,4], var.config.disk-count)
+    error_message = "Allowed values for  config.disk-count are  0,1,2,3 or 4"
+  }
+
 }

@@ -19,10 +19,9 @@ module "this" {
   disk-throughput            = var.config.disk-throughput
   disk-type                  = var.config.disk-type
   files                      = local.files
-  hostname                   = var.config.hostname
-  name                       = var.config.cluster-name
+  name                       = var.config.hostname
   packages                   = local.packages
-  prefix                     = var.config.prefix
+  prefix                     = var.config.cluster-name
   startup-commands           = local.startup-commands
   tags                       = var.config.tags
 
