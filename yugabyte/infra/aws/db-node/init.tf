@@ -18,16 +18,7 @@ locals {
       content     = file("${path.module}/scripts/install_software.sh")
       defer       = true
       append      = false
-    },
-    {
-      path        = "/home/yugabyte/bin/start_yugabyted.sh"
-      binary      = false
-      owner       = "yugabyte:yugabyte"
-      permissions = "0711"
-      content     = file("${path.module}/scripts/start_yugabyted.sh")
-      defer       = true
-      append      = false
-    },
+    }
     //TODO: Add service
     //TODO: Add tserver and master flags
   ]
