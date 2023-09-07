@@ -95,7 +95,7 @@ variable "disk-throughput" {
 variable "disk-size-gb" {
   type        = number
   description = "AWS disk size in gb"
-  default = 0
+  default = 10
 }
 variable "disk-count" {
   type        = number
