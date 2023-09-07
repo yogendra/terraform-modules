@@ -1,23 +1,3 @@
-output "this" {
-  value = merge(module.this, {
-    cloud-location = local.ydb-cloud-location.cloud_location
-    additional-info = <<EOF
-      Configure YufabyteDB Data Placement
-      # Configure data placement for zone level toleration (execute on any one of the nodes)
-      yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=zone --rf  3
-
-      # Configure data placement for region level toleration (execute on any one of the nodes)
-      yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=region --rf  3
-
-      # YSQLSH
-      ysqlsh -h ${module.this.vm-private-ip}
-
-
-      # Master UI : http://${module.this.vm-private-ip}:7000
-EOF
-  })
-}
-
 output "vm-private-ip" {
   value = module.this.vm-private-ip
 }
@@ -45,14 +25,27 @@ output "cloud" {
 output "cloud-location"{
   value = local.ydb-cloud-location.cloud_location
 }
+output "name" {
+  value = module.this.name
+}
+output "hostname" {
+  value = module.this.hostname
+}
 output "additional-info"{
   value = <<EOF
 ${module.this.vm-ssh-command-template}
 
-# Configure data placement for zone level toleration (execute on any one of the nodes)
-yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=zone --rf  3
+## Query programs
+YSQLSH        : ysqlsh -h ${module.this.vm-private-ip}
+YSQLSH        : ycqlsh ${module.this.vm-private-ip}
 
-# Configure data placement for region level toleration (execute on any one of the nodes)
-yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=region --rf  3
+## UI
+Master UI     : http://${module.this.vm-private-ip}:7000
+Tserver UI    : http://${module.this.vm-private-ip}:9000
+Yugabyted Web : http://${module.this.vm-private-ip}:15433
+
+## YB Cluster Configuration
+Zone Level FT : yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=zone --rf  3
+Regional FT   : yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=region --rf  3
 EOF
 }
