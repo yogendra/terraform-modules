@@ -1,6 +1,6 @@
 variable "config" {
   type = object({
-    yb-release                 = optional(string, "2.19.0.0-b190")
+    yb-version                 = optional(string, "2.19.0.0")
     arch                       = optional(string, "x86_64")
     assign-public-ip           = optional(bool, false)
     aws-ami                    = optional(string, "")
@@ -11,11 +11,9 @@ variable "config" {
     aws-public-hosted-zone-id  = optional(string, null)
     aws-security-group-ids     = list(string)
     aws-subnet-id              = string
-    disk-count                 = optional(number, 1)
     disk-size-gb               = optional(number, 10)
     disk-iops                  = optional(number, 3000)
     disk-throughput            = optional(number, 125)
-    disk-type                  = optional(string, "gp3")
     files = optional(list(object({
       path        = string
       binary      = optional(bool, false)
@@ -47,11 +45,6 @@ variable "config" {
   validation {
     condition     = contains([1,3,5,7], var.config.replication-factor)
     error_message = "Allowed values for  config.replication-factor are 1, 3, 5 or 7"
-  }
-
-  validation {
-    condition     = contains([0,1,2,3,4], var.config.disk-count)
-    error_message = "Allowed values for  config.disk-count are  0,1,2,3 or 4"
   }
 
 }
