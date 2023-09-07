@@ -14,6 +14,7 @@ provider "aws" {
   }
 }
 locals {
+  nodes = 3
   tags = {
     yb_owner = "yrampuria"
     yb_dept  = "sales"
@@ -36,7 +37,10 @@ locals {
   }
   default_config = {
     aws-keypair-name       = "shr-0"
-    aws-machine-type       = "t3.2xlarge"
+    # arch                   = "x86_64"
+    # aws-machine-type       = "t3.2xlarge"
+    arch                   = "arm64"
+    aws-machine-type       = "t4g.2xlarge"
     aws-security-group-ids = ["sg-0a1bc2191b4b94603"]
     aws-subnet-id          = "subnet-049ef6f8b94f9d6ee"
     cluster-name           = "yb-oss-sz"
@@ -59,7 +63,7 @@ module "first" {
 }
 
 module "rest" {
-  count  = 4
+  count  = local.nodes - 1
   source = "../../"
   config = merge(local.default_config, {
     hostname    = "n${count.index + 2}"
