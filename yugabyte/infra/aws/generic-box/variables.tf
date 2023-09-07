@@ -102,6 +102,11 @@ variable "disk-count" {
   description = "AWS disk count"
   default = 0
 }
+variable "mount-points" {
+  type = list(string)
+  description = "Mount points"
+  default = []
+}
 variable "cloud-init-extras" {
   type = string
   description = "Cloud Init Extras"
