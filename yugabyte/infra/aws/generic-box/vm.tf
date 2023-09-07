@@ -29,7 +29,7 @@ data "aws_ami" "ami" {
 }
 locals {
   ami-id   = length(var.aws-ami) == 0 ? data.aws_ami.ami[0].id : var.aws-ami
-  hostname = length(var.hostname) > 0 ? var.hostname : replace(lower("${var.name}-${var.prefix}"), "/[^0-9A-Za-z]/", "-")
+  hostname = length(var.hostname) > 0 ? var.hostname : replace(lower("${var.prefix}-${var.name}"), "/[^0-9A-Za-z]/", "-")
   device_name = [ "/dev/sdh", "/dev/sdi", "/dev/sdj", "/dev/sdk", "/dev/sdl", "/dev/sdm", "/dev/sdn", "/dev/sdo", ]
   mount-points = length(var.mount-points) > 0? var.mount-points : [ for i in range(var.disk-count): "/mnt/d${i}" ]
 }
@@ -181,9 +181,9 @@ resource "aws_instance" "vm" {
     resource-type = "ec2"
     resource-subtype = "ec2"
   })
-  lifecycle {
-    ignore_changes = [ami]
-  }
+  # lifecycle {
+  #   ignore_changes = [ami]
+  # }
 }
 resource "aws_eip_association" "vm-public-ip" {
   count         = var.assign-public-ip ? 1 : 0
