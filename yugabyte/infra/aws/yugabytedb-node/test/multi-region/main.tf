@@ -85,6 +85,7 @@ module "region1" {
     hostname = "r1-n${count.index+2}"
     aws-security-group-ids = ["sg-0a1bc2191b4b94603"]
     aws-subnet-id          = "subnet-049ef6f8b94f9d6ee"
+    join-master = module.first.vm-private-ip
   })
   providers = {
     aws = aws.ap_southeast_1
@@ -99,6 +100,7 @@ module "region2" {
     hostname = "r2-n${count.index+1}"
     aws-security-group-ids = ["sg-0d404eb64b830616e"]
     aws-subnet-id          = "	subnet-058766caa2ed2df95"
+    join-master = module.first.vm-private-ip
   })
   providers = {
     aws = aws.us_west_1
@@ -112,6 +114,8 @@ module "region3"{
     hostname = "r3-n${count.index+1}"
     aws-security-group-ids = ["sg-03d815a45f23d46fa"]
     aws-subnet-id          = "subnet-04af81b6dd78548f8"
+    join-master = module.first.vm-private-ip
+
   })
   providers = {
     aws = aws.eu_west_2
