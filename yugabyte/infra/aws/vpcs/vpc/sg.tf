@@ -309,6 +309,15 @@ resource "aws_security_group_rule" "yb-db-nodes-54422" {
   type             = "ingress"
   cidr_blocks      = local.project_cidrs
 }
+resource "aws_security_group_rule" "yb-db-nodes-15433" {
+  description      = "Allow YugbayteD New UI"
+  from_port        = 15433
+  to_port          = 15433
+  protocol         = "tcp"
+  cidr_blocks      = local.project_cidrs
+  type             = "ingress"
+  security_group_id = aws_security_group.yb-db-nodes.id
+}
 resource "aws_security_group_rule" "yb-db-nodes-allow-mpl" {
   security_group_id = aws_security_group.yb-db-nodes.id
   count             = local.use-mpl ? 1 : 0
