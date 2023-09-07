@@ -2,11 +2,18 @@ output "this" {
   value = merge(module.this, {
     cloud-location = local.ydb-cloud-location.cloud_location
     additional-info = <<EOF
-# Configure data placement for zone level toleration (execute on any one of the nodes)
-yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=zone --rf  3
+      Configure YufabyteDB Data Placement
+      # Configure data placement for zone level toleration (execute on any one of the nodes)
+      yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=zone --rf  3
 
-# Configure data placement for region level toleration (execute on any one of the nodes)
-yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=region --rf  3
+      # Configure data placement for region level toleration (execute on any one of the nodes)
+      yugabyted configure data_placement  --config ~/yugabyte-db/yugabyted.conf  --fault_tolerance=region --rf  3
+
+      # YSQLSH
+      ysqlsh -h ${module.this.vm-private-ip}
+
+
+      # Master UI : http://${module.this.vm-private-ip}:7000
 EOF
   })
 }
