@@ -1,0 +1,18 @@
+{
+  "builds": [
+    {
+      "name": "almalinux8",
+      "builder_type": "amazon-ebs",
+      "build_time": 1694111648,
+      "files": null,
+      "artifact_id": "af-south-1:ami-0927c3745a607513f,ap-east-1:ami-0e0ada1a35cb44bdd,ap-northeast-1:ami-095c28be9f31fd7f7,ap-northeast-2:ami-0cac9222d016893f6,ap-northeast-3:ami-0f3d16e3b7de333a0,ap-south-1:ami-0e23b7c3af3afdce5,ap-south-2:ami-0e79b456d0a428b2f,ap-southeast-1:ami-0de28f5f98e95685f,ap-southeast-2:ami-0075f2064b25b2649,ap-southeast-3:ami-0b0ded98eccde7d27,ap-southeast-4:ami-096f68bec1873b506,ca-central-1:ami-0c494ce66b1af96f7,eu-central-1:ami-03c6507570d8f97f4,eu-central-2:ami-0a4aabfde09fc5fad,eu-north-1:ami-0f4efca5d52a08d8c,eu-south-1:ami-047f15c9f0e1e60e2,eu-south-2:ami-0309c4257ca3726e6,eu-west-1:ami-0690c01078bf88cde,eu-west-2:ami-0fa2fe1526daa7cc0,eu-west-3:ami-09959fafe61f12699,il-central-1:ami-02c9ff1671b639569,me-central-1:ami-022f99cf163ec376c,me-south-1:ami-0a742d358e7fc4553,sa-east-1:ami-07e25f671ad6cac54,us-east-1:ami-02549c2373e78e152,us-east-2:ami-06dd7d473b74d938b,us-west-1:ami-02d5d809af62030de,us-west-2:ami-0601701c780be49e9",
+      "packer_run_uuid": "f363d1e7-8c91-1830-2607-454da37b5c5b",
+      "custom_data": {
+        "arch": "x86_64",
+        "yb_owner": "yrampuria",
+        "yb_version": "2.18.2.1"
+      }
+    }
+  ],
+  "last_run_uuid": "f363d1e7-8c91-1830-2607-454da37b5c5b"
+}
