@@ -62,7 +62,7 @@ runcmd:
 mounts:
 %{ endif ~}
 %{ for s in range(disk-count) ~}
-- [ "LABEL=d${s}", /mnt/d${s}, "auto", "defaults,nofail", "0", "0" ]
+- [ "LABEL=d${s}", ${mount-points[s]}, "auto", "defaults,nofail", "0", "0" ]
 %{ endfor ~}
 
 mount_default_fields: [ None, None, "auto", "defaults,nofail", "0", "2" ]
