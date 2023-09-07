@@ -47,11 +47,9 @@ bootcmd:
 %{ endfor ~}
 runcmd:
 - chown -R yugabyte:yugabyte  /home/yugabyte
-- echo "create mount paths"
-%{ for s in range(disk-count) ~}
-- mkdir -p /home/yugabyte/yugabyte-db/data/disk${s}
-- chown -R yugabyte:yugabyte  /home/yugabyte/yugabyte-db
-%{ endfor ~}
+%{ if length(mount-points) > 0 ~}
+- chmod a+rwx ${join( " ", mount-points)}
+%{ endif ~}
 %{ for s in startup-commands ~}
 - |
   ${s}
