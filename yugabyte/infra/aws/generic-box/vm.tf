@@ -31,6 +31,7 @@ locals {
   ami-id   = length(var.aws-ami) == 0 ? data.aws_ami.ami[0].id : var.aws-ami
   hostname = length(var.hostname) > 0 ? var.hostname : replace(lower("${var.name}-${var.prefix}"), "/[^0-9A-Za-z]/", "-")
   device_name = [ "/dev/sdh", "/dev/sdi", "/dev/sdj", "/dev/sdk", "/dev/sdl", "/dev/sdm", "/dev/sdn", "/dev/sdo", ]
+  mount-points = length(var.mount-points) > 0? var.mount-points : [ for i in range(var.disk-count): "/mnt/d${i}" ]
 }
 
 data "aws_key_pair" "keypair" {
@@ -152,6 +153,7 @@ data "cloudinit_config" "ci" {
       internal-address = local.internal-address
       external-address = local.external-address
       cloud-init-extras = var.cloud-init-extras
+      mount-points      = local.mount-points
     })
   }
 }
