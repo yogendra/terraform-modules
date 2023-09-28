@@ -1,7 +1,10 @@
-module "test-vpc-config" {
+module "vpc-config" {
   source = "../"
-  project-cidr =  "10.1.0.0/16"
+  project-cidr =  "10.8.0.0/16"
+  subnets = ["pub", "pvt"]
+  use-nat = true
+  air-gapped = false
 }
 output "config" {
-  value = module.test-vpc-config.vpc-config
+  value = module.vpc-config.config
 }
