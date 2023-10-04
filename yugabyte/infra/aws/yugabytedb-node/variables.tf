@@ -4,6 +4,7 @@ variable "config" {
     arch                       = optional(string, "x86_64")
     assign-public-ip           = optional(bool, false)
     aws-ami                    = optional(string, "")
+    use-prebuilt               = optional(bool, false)
     aws-instance-profile       = optional(string, null)
     aws-keypair-name           = optional(string, null)
     aws-machine-type           = optional(string, "t3.2xlarge")

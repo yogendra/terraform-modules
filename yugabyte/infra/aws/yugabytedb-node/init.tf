@@ -13,7 +13,7 @@ data "aws_subnet" "subnet" {
 
 
 locals {
-  use-prebuilt = var.config.aws-ami == ""
+  use-prebuilt = var.config.aws-ami == "" && var.use-prebuilt == true
   aws-ami = local.use-prebuilt? local.pre-built-amis[var.config.yb-version][var.config.arch][data.aws_region.current.name]:""
 
   join-master = var.config.join-master == null ? "" : var.config.join-master
