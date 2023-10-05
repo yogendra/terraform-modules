@@ -10,6 +10,8 @@ resource "aws_subnet" "public" {
     Name = "${var.prefix}-pub-${local.public_subnets[count.index].az}"
     yb_aws_service = "vpc"
     yb_resource_type = "subnet"
+    "kubernetes.io/role/elb" = 1
+
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
@@ -44,6 +46,7 @@ resource "aws_subnet" "private" {
     Name = "${var.prefix}-pvt-${local.private_subnets[count.index].az}"
     yb_aws_service = "vpc"
     yb_resource_type = "subnet"
+    "kubernetes.io/role/internal-elb" = 1
   }
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.secondary_cidr
