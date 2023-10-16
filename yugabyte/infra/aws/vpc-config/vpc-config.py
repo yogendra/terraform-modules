@@ -82,16 +82,17 @@ def generate(
       "use-nat"    : use_nat,
       "cidrs" :  [],
       "zones" : [],
+      "region" : region,
     }
     # region_cidr_index = region_cidr_index + 1
     import math
-    for addition_zones in range(1+math.floor(len(zones) / 4)):
+    for addition_zones in range(1+math.floor(len(zones) / 5)):
       vpc[region]["cidrs"].append(_sub_cidr(project_cidr, region_suffix, region_cidr_index))
       region_cidr_index = region_cidr_index + 1
 
     for zone in zones:
       az_cidr = _sub_cidr(project_cidr, zone_suffix, zone_cidr_index)
-      az_subnets = [{ subnet: _sub_cidr(az_cidr, subnet_suffix, i) for i, subnet in enumerate(subnets)}]
+      az_subnets = { subnet: _sub_cidr(az_cidr, subnet_suffix, i) for i, subnet in enumerate(subnets)}
       zone_cidr_index = zone_cidr_index + 1
       zone_config = {
         "name": zone,
