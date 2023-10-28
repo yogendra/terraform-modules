@@ -34,3 +34,8 @@ variable "yugabyte_k8s_pull_secret" {
   description = "YBA K8s Pull Secret"
   default = null
 }
+
+variable "azs" {
+  type = list(string)
+  description = "YBA Prometheus Domain"
+}
