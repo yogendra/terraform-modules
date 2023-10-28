@@ -7,7 +7,10 @@ variable "cluster_service_ipv4_cidr" {
   description = "EKS Service CIDR"
   default = "10.100.0.0/16"
 }
-
+variable "project-route53-hosted-zone" {
+  type = string
+  description = "EKS Service CIDR"
+}
 variable "project-domain" {
   type = string
   description = "Project Domain"
@@ -40,3 +43,21 @@ variable "eks-version" {
   description = "YBA Version"
   default = "1.27"
 }
+
+variable "vpc-id" {
+  type = string
+  description = "VPC ID"
+}
+
+variable "worker-subnets" {
+  type = list(string)
+  description = "private subnets for workers"
+}
+
+variable "control-plane-subnets" {
+  type = list(string)
+  description = "control plane subnets"
+}
+
+
+
