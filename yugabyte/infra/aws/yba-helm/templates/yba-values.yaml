@@ -8,7 +8,7 @@ yugaware:
       cpu: "1"
       memory: 8Gi
   storage: 100Gi
-  storageClass: "gp3"
+  storageClass: ${storage-class}
   service:
     # annotations:
       # service.beta.kubernetes.io/aws-load-balancer-internal: "true"

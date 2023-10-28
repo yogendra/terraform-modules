@@ -2,7 +2,7 @@
 ## YBA Namesapce
 resource "kubernetes_namespace" "yba" {
   metadata {
-    name = "yba"
+    name = local.yba-ns
   }
 }
 
@@ -12,8 +12,8 @@ resource "kubernetes_manifest" "yugabyte-k8s-pull-secret" {
   manifest = merge(
     yamldecode(local.yba-pull-secret), {
       metadata = {
-        namespace = "yba"
-        name      = "yugabyte-k8s-pull-secret"
+        namespace = local.yba-ns
+        name      = local.yba-k8s-pull-secret-name
       }
   })
   depends_on = [
@@ -29,13 +29,8 @@ resource "helm_release" "yba" {
   repository       = "https://charts.yugabyte.com"
   chart            = "yugaware"
   create_namespace = true
-  namespace        = "yba"
-  values = [
-    templatefile("${path.module}/templates/yba-values.yaml", {
-      yba-domain = local.yba-domain
-      yba-prometheus-domain = local.yba-prometheus-domain
-    })
-  ]
+  namespace        = local.yba-ns
+  values = local.yba-values
   depends_on = [
     kubernetes_manifest.yugabyte-k8s-pull-secret
   ]
@@ -54,7 +49,7 @@ resource "kubernetes_manifest" "yba-ingress" {
       )
       ), {
       metadata = {
-        namespace = "yba"
+        namespace = local.yba-ns
         name      = "yba-ingress"
       }
   })
@@ -77,56 +72,14 @@ resource "yba_customer_resource" "superadmin" {
 }
 
 
-data "http" "yb-eks-region-metadata" {
-  url    = "https://raw.githubusercontent.com/yugabyte/yugabyte-db/master/managed/src/main/resources/configs/kubernetes/eks-region-metadata.yml"
-  method = "GET"
-}
+
 locals {
   yb-eks-region-metadata = yamldecode(data.http.yb-eks-region-metadata.response_body)
   yba-customer-uuid      = yba_customer_resource.superadmin.cuuid
   yba-customer-api-url   = "${local.yba-api-url}/customers/${local.yba-customer-uuid}"
   yba-api-token          = yba_customer_resource.superadmin.api_token
   yba-pull-secret        = yamlencode(yamldecode(file(local.yugabyte_k8s_pull_secret)))
-  yba-provider-eks-request = jsonencode({
-    code = "kubernetes"
-    name = "${local.project-name}-eks"
-    details = {
-      airGapped = false
-      cloudInfo = {
-        kubernetes = {
-          kubernetesPullSecretContent   = local.yba-pull-secret
-          kubernetesImageRegistry       = "quay.io/yugabyte/yugabyte"
-          kubernetesProvider            = "eks"
-          kubernetesPullSecretName      = "yugabyte-k8s-pull-secret"
-          kubernetesImagePullSecretName = "yugabyte-k8s-pull-secret"
-        }
-      }
-    }
-    regions = [
-      {
-        code = data.aws_region.current.name
-        name = local.yb-eks-region-metadata[data.aws_region.current.name].name
-        zones = [for idx, az in local.azs :
-          {
-            code = az,
-            name = az,
-            details = {
-              cloudInfo = {
-                kubernetes = {
-                  kubernetesStorageClass = "gp3"
-                }
-              }
-            }
-          }
-        ]
-        details = {
-          cloudInfo = {
-            kubernetes = {}
-          }
-        }
-      }
-    ]
-  })
+  yba-provider-eks-request = local.yba-cloud-k8s-config
 }
 provider "yba" {
   host      = local.yba-domain
