@@ -2,11 +2,11 @@ resource "aws_security_group" "app"{
   name        = "${var.prefix}-app"
   description = "SG for applications nodes"
   vpc_id      = aws_vpc.vpc.id
-  tags = {
+  tags = merge(var.tags, {
     Name = "${var.prefix}-app"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
-  }
+  })
 }
 resource "aws_security_group_rule" "allow-ingress-80" {
   description      = "Allow HTTPS"
@@ -67,9 +67,11 @@ resource "aws_security_group" "yba-node" {
   name        = "${var.prefix}-yba-nodes"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.vpc.id
-  tags = {
+  tags = merge(var.tags, {
     Name = "${var.prefix}-yba-node"
-  }
+    yb_aws_service = "ec2"
+    yb_resource_type = "security_group"
+  })
 }
 
 resource "aws_security_group_rule" "yba-node-egress" {
@@ -146,11 +148,11 @@ resource "aws_security_group" "yb-db-nodes" {
   name        = "${var.prefix}-ybdb"
   description = "Allow Yugabyte DB Traffic"
   vpc_id      = aws_vpc.vpc.id
-  tags = {
+  tags = merge(var.tags, {
     Name = "${var.prefix}-yba-db-node"
     yb_aws_service = "ec2"
     yb_resource_type = "security_group"
-  }
+  })
 }
 resource "aws_security_group_rule" "yb-db-nodes-egress-public"{
   description =  "Allow egress to all destinations"
