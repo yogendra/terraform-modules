@@ -66,3 +66,6 @@ output "route-tables" {
 output "key-names"{
   value = aws_key_pair.keypair.*.key_name
 }
+output "nat-ip"{
+  value = one(aws_eip.nat.*.public_ip)
+}

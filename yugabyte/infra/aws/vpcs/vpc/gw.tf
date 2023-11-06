@@ -31,13 +31,17 @@ module "nat" {
 
 resource "aws_eip" "nat"{
   count = local.create_nat_gw ? 1 : 0
-  network_interface = one(module.nat).eni_id
-
-  tags = {
+  domain = "vpc"
+  tags = merge(var.tags,{
     Name = "${var.prefix}-nat"
     yb_aws_service = "ec2"
     yb_resource_type = "eip"
-  }
+  })
+}
+resource "aws_eip_association" "nat" {
+  count = local.create_nat_gw ? 1 : 0
+  network_interface_id = one(module.nat.*.eni_id)
+  allocation_id = one(aws_eip.nat).id
 }
 
 

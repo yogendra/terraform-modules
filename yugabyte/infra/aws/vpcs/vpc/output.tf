@@ -53,3 +53,6 @@ output "route-table-default"{
 output "route-tables" {
   value = concat([aws_vpc.vpc.default_route_table_id], aws_route_table.private.*.id, aws_route_table.public.*.id)
 }
+output "nat-ip"{
+  value = one(aws_eip.nat.*.public_ip)
+}
