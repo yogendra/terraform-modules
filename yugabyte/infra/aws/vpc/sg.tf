@@ -350,3 +350,12 @@ resource "aws_security_group_rule" "default-egress"{
 
 
 
+resource "aws_security_group_rule" "nat-remote-ingress"{
+  count            = local.create_nat_gw && local.create_mpl? 1 : 0
+  type             = "ingress"
+  from_port        = 0
+  to_port          = 0
+  protocol         = "-1"
+  prefix_list_ids  = aws_ec2_managed_prefix_list.allow-remote.*.id
+  security_group_id = module.nat[0].sg_id
+}
