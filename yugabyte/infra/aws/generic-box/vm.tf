@@ -171,7 +171,7 @@ resource "aws_instance" "vm" {
     device_index         = 0
   }
   root_block_device {
-    volume_size = 50
+    volume_size = var.disk-size-gb
     volume_type = "gp3"
   }
   user_data_base64 = data.cloudinit_config.ci.rendered
