@@ -23,7 +23,7 @@ locals {
   create_igw =   !var.config.air-gapped
   create_endpoints = var.config.air-gapped && !var.config.use-nat
   create_nat_gw = (!var.config.air-gapped) && var.config.use-nat
-
+  nat-gw-spot-instance = var.nat-gw-spot-instance
   // Some regions don't support managed prefix list. meh!
   mpl_unsupported_regions = [ "ap-south-2", "ap-southeast-4", "eu-central-2", "eu-south-2", "me-central-1"]
 

@@ -56,3 +56,8 @@ variable "db-zone-id" {
   type = string
   description = "Route53 DB Zone ID"
 }
+variable "nat-gw-spot-instance" {
+  type = bool
+  description = "NAT GW instance should be spot or not"
+  default = false
+}
