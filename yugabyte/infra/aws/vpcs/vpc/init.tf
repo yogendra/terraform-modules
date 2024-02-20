@@ -24,7 +24,7 @@ locals {
   create_igw =   !var.air-gapped
   create_endpoints = var.air-gapped
   create_nat_gw = !var.air-gapped
-  nat-gw-spot-instance = var.nat_gw_spot_instance
+  nat-gw-spot-instance = var.nat-gw-spot-instance
   // Some regions don't support managed prefix list. meh!
   nat-instance-types-override = {
     default = ["t3.nano","t3a.nano"]
