@@ -38,3 +38,8 @@ variable "zones" {
   description = "Zone definition. name, cidrs and subnet to cidr map"
 }
 
+variable "nat-gw-spot-instance" {
+  type = bool
+  description = "NAT GW instance should be spot or not"
+  default = false
+}

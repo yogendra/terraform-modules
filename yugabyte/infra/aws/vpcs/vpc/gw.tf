@@ -20,7 +20,7 @@ module "nat" {
   public_subnet               = aws_subnet.public[0].id
   private_subnets_cidr_blocks = local.private_subnets[*].cidr
   private_route_table_ids     = [aws_route_table.private.id, aws_default_route_table.default.id]
-  use_spot_instance           = true
+  use_spot_instance           = local.nat-gw-spot-instance
   tags = {
     Name = "${var.prefix}-nat"
     yb_aws_service = "vpc"
