@@ -22,7 +22,7 @@ module "nat" {
   private_route_table_ids     = [aws_route_table.private.id, aws_default_route_table.default.id]
   use_spot_instance           = local.nat-gw-spot-instance
   tags = merge(var.tags, {
-    Name = "${var.prefix}-nat"
+    Name = "${var.prefix}-nat-${local.region}"
     yb_aws_service = "vpc"
     yb_resource_type = "nat"
   })

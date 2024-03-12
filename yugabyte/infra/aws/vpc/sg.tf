@@ -280,6 +280,15 @@ resource "aws_security_group_rule" "yb-db-nodes-9042" {
   type             = "ingress"
   security_group_id = aws_security_group.yb-db-nodes.id
 }
+resource "aws_security_group_rule" "yb-db-nodes-9070" {
+  description      = "Allow Node Agent"
+  from_port        = 9070
+  to_port          = 9070
+  protocol         = "tcp"
+  cidr_blocks      = local.project_cidrs
+  type             = "ingress"
+  security_group_id = aws_security_group.yb-db-nodes.id
+}
 resource "aws_security_group_rule" "yb-db-nodes-6379" {
   description      = "Allow Yedis"
   from_port        = 6379
