@@ -85,6 +85,14 @@ resource "aws_iam_policy" "yba" {
         "Resource": "*"
       },
       {
+        "Sid" : "S3Manager",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:*",
+        ],
+        "Resource" : "*"
+      },
+      {
         "Sid" : "EC2Manager",
         "Effect" : "Allow",
         "Action" : [
